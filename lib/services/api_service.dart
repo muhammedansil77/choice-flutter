@@ -55,9 +55,72 @@ class ApiService with ChangeNotifier {
     );
 
     if (response.statusCode != 201) {
-      throw Exception('Failed to create user: ${jsonDecode(response.body)['message']}');
+      throw Exception(_parseErrorMessage(response, 'Failed to create user'));
     }
     _cachedUsers = null;
+  }
+
+  String _parseErrorMessage(http.Response response, String fallback) {
+    try {
+      final body = jsonDecode(response.body);
+      if (body is Map && body.containsKey('message')) {
+        return body['message'];
+      }
+    } catch (_) {
+      if (response.statusCode == 404) {
+        return 'Backend route not found (404). Please restart/redeploy your Node backend server on api.anzil.online.';
+      }
+      if (response.body.startsWith('<!DOCTYPE') || response.body.startsWith('<html')) {
+        return 'Server error (${response.statusCode}). Backend returned HTML response instead of JSON.';
+      }
+    }
+    return '$fallback (${response.statusCode})';
+  }
+
+  Future<void> sendRegisterOtp(String email) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/auth/send-otp'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(_parseErrorMessage(response, 'Failed to send OTP'));
+    }
+  }
+
+  Future<void> registerWithOtp({
+    required String name,
+    required String email,
+    required String password,
+    required String phoneNumber,
+    required String otp,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/auth/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+        'password': password,
+        'phoneNumber': phoneNumber,
+        'otp': otp,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      final resData = jsonDecode(response.body);
+      _token = resData['token'];
+      _user = resData;
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', _token!);
+      await prefs.setString('user', jsonEncode(_user));
+
+      notifyListeners();
+    } else {
+      throw Exception(_parseErrorMessage(response, 'Failed to complete registration'));
+    }
   }
 
   Future<void> login(String email, String password) async {
@@ -78,7 +141,7 @@ class ApiService with ChangeNotifier {
       
       notifyListeners();
     } else {
-      throw Exception('Failed to login: ${jsonDecode(response.body)['message']}');
+      throw Exception(_parseErrorMessage(response, 'Failed to login'));
     }
   }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'screens/login_screen.dart';
-import 'screens/home_screen.dart';
+import 'screens/splash_screen.dart';
 import 'services/api_service.dart';
 
 void main() {
@@ -21,19 +20,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Choice Electricals',
+      title: 'Choice Electricals POS',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF087FEF),
+          primary: const Color(0xFF087FEF),
+          surface: Colors.white,
+        ),
+        scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
       ),
-      home: Consumer<ApiService>(
-        builder: (context, apiService, _) {
-          if (!apiService.isAuthenticated) {
-            return const LoginScreen();
-          }
-          return const HomeScreen();
-        },
-      ),
+      home: const SplashScreen(),
     );
   }
 }

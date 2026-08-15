@@ -110,8 +110,8 @@ class _HomeContentState extends State<_HomeContent> {
     final user = context.watch<ApiService>().currentUser;
     final userName = user?['name'] ?? 'Guest';
 
-    const Color primaryBlue = Color(0xFF1E3A8A);
-    const Color accentBlue = Color(0xFF3B82F6);
+    const Color primaryBlue = Color(0xFF0B3B82);
+    const Color accentBlue = Color(0xFF087FEF);
     const Color luxuryGold = Color(0xFFEAB308);
 
     return Scaffold(
