@@ -16,27 +16,32 @@ class ApiService with ChangeNotifier {
   List<dynamic>? _cachedCategories;
 
   ApiService() {
-    _loadPersistedToken();
+    loadPersistedToken();
   }
 
-  Future<void> _loadPersistedToken() async {
+  Future<bool> loadPersistedToken() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedToken = prefs.getString('token');
       final savedUser = prefs.getString('user');
-      if (savedToken != null) {
-        _token = savedToken;
-        if (savedUser != null) {
-          _user = jsonDecode(savedUser);
+      if (savedToken != null && savedToken.trim().isNotEmpty) {
+        _token = savedToken.trim();
+        if (savedUser != null && savedUser.trim().isNotEmpty) {
+          try {
+            _user = jsonDecode(savedUser);
+          } catch (_) {}
         }
         notifyListeners();
+        return true;
       }
     } catch (e) {
       debugPrint('Error loading persisted token: $e');
     }
+    return false;
   }
 
-  bool get isAuthenticated => _token != null;
+  String? get token => _token;
+  bool get isAuthenticated => _token != null && _token!.trim().isNotEmpty;
   Map<String, dynamic>? get currentUser => _user;
 
   Future<void> createUserByAdmin(String name, String email, String password, String phoneNumber) async {

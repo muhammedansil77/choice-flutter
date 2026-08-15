@@ -102,28 +102,38 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
   Future<void> _initializeAndNavigate() async {
-    // Total startup display time (~1.5 seconds)
-    await Future.delayed(const Duration(milliseconds: 1600));
-
-    if (!mounted) return;
-
     final apiService = context.read<ApiService>();
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final bool onboardingCompleted = prefs.getBool('onboardingCompleted') ?? false;
+      // Concurrently restore auth credentials from disk and show smooth splash animation
+      final results = await Future.wait([
+        apiService.loadPersistedToken(),
+        SharedPreferences.getInstance(),
+        Future.delayed(const Duration(milliseconds: 1500)),
+      ]);
 
       if (!mounted) return;
 
-      if (apiService.isAuthenticated) {
-        Navigator.of(context).pushReplacement(
+      final bool hasTokenInService = results[0] as bool;
+      final prefs = results[1] as SharedPreferences;
+      final bool onboardingCompleted = prefs.getBool('onboardingCompleted') ?? false;
+      final String? savedToken = prefs.getString('token');
+
+      final bool isUserLoggedIn = hasTokenInService || (savedToken != null && savedToken.trim().isNotEmpty);
+
+      if (isUserLoggedIn) {
+        // Authenticated user -> Navigate straight to HomeScreen & clear navigation backstack
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const HomeScreen()),
+          (route) => false,
         );
       } else if (!onboardingCompleted) {
+        // First time app launch -> OnboardingScreen
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const OnboardingScreen()),
         );
       } else {
+        // Returning unauthenticated user -> LoginScreen
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const LoginScreen()),
         );

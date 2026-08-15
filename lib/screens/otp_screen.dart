@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
+import 'home_screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String name;
@@ -148,7 +149,10 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
 
       if (mounted) {
         _showSnackBar('Account registered successfully!', isError: false);
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          (route) => false,
+        );
       }
     } catch (e) {
       if (mounted) {
