@@ -15,11 +15,10 @@ class RewardStoreScreen extends StatefulWidget {
 }
 
 class _RewardStoreScreenState extends State<RewardStoreScreen> {
-  final TextEditingController _searchController = TextEditingController();
   List<dynamic> _products = [];
   List<dynamic> _categories = [];
   String? _selectedCategoryFilter;
-  String _searchQuery = '';
+  String _sortOrder = 'default'; // 'default', 'low_to_high', 'high_to_low'
   bool _isLoading = true;
 
   // Design Tokens (Loyalty Red Accent & Clean Enterprise Styling)
@@ -34,12 +33,6 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
     super.initState();
     _selectedCategoryFilter = widget.initialCategory;
     _fetchData();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 
   Future<void> _fetchData() async {
@@ -62,23 +55,23 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
     }
   }
 
-  // Filter products by search query
-  List<dynamic> get _searchFilteredProducts {
-    if (_searchQuery.trim().isEmpty) return _products;
-    final q = _searchQuery.toLowerCase().trim();
-    return _products.where((p) {
-      final name = (p['name'] ?? '').toString().toLowerCase();
-      final cat = (p['category'] ?? '').toString().toLowerCase();
-      final desc = (p['description'] ?? '').toString().toLowerCase();
-      return name.contains(q) || cat.contains(q) || desc.contains(q);
-    }).toList();
-  }
-
-  // Group products by their categories
+  // Group products by their categories and apply sorting
   Map<String, List<dynamic>> get _categoryGroupedProducts {
     final Map<String, List<dynamic>> groups = {};
 
-    final list = _searchFilteredProducts;
+    final list = List<dynamic>.from(_products);
+
+    // Apply Low to High or High to Low Points Sorting
+    num getPoints(dynamic p) {
+      final val = p['priceInCoins'] ?? p['coinPrice'] ?? 0;
+      return (val is num) ? val : (num.tryParse(val.toString()) ?? 0);
+    }
+
+    if (_sortOrder == 'low_to_high') {
+      list.sort((a, b) => getPoints(a).compareTo(getPoints(b)));
+    } else if (_sortOrder == 'high_to_low') {
+      list.sort((a, b) => getPoints(b).compareTo(getPoints(a)));
+    }
 
     // If a specific category filter is chosen via "View More"
     if (_selectedCategoryFilter != null && _selectedCategoryFilter != 'All') {
@@ -238,42 +231,21 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
             : CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
-                  // Search Bar at Top
+                  // Sort Filter Bar at Top (Low to High / High to Low)
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: cardBorder),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.02),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
+                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Row(
+                          children: [
+                            _buildSortChip('Default', 'default', Icons.grid_view_rounded),
+                            const SizedBox(width: 8),
+                            _buildSortChip('Low to High', 'low_to_high', Icons.arrow_upward_rounded),
+                            const SizedBox(width: 8),
+                            _buildSortChip('High to Low', 'high_to_low', Icons.arrow_downward_rounded),
                           ],
-                        ),
-                        child: TextField(
-                          controller: _searchController,
-                          onChanged: (val) => setState(() => _searchQuery = val),
-                          decoration: InputDecoration(
-                            hintText: 'Search reward products...',
-                            hintStyle: const TextStyle(fontSize: 13, color: textMuted),
-                            prefixIcon: const Icon(Icons.search_rounded, color: textMuted, size: 20),
-                            suffixIcon: _searchQuery.isNotEmpty
-                                ? IconButton(
-                                    icon: const Icon(Icons.clear_rounded, size: 18, color: textMuted),
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      setState(() => _searchQuery = '');
-                                    },
-                                  )
-                                : null,
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
                         ),
                       ),
                     ),
@@ -313,19 +285,17 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
 
                   // Empty State Check
                   if (grouped.isEmpty)
-                    SliverFillRemaining(
+                    const SliverFillRemaining(
                       hasScrollBody: false,
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.inventory_2_outlined, size: 64, color: Color(0xFFCBD5E1)),
-                            const SizedBox(height: 12),
+                            Icon(Icons.inventory_2_outlined, size: 64, color: Color(0xFFCBD5E1)),
+                            SizedBox(height: 12),
                             Text(
-                              _searchQuery.isNotEmpty
-                                  ? 'No reward items match "$_searchQuery"'
-                                  : 'No reward products available yet',
-                              style: const TextStyle(
+                              'No reward products available yet',
+                              style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: textMuted,
@@ -349,6 +319,64 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                   const SliverToBoxAdapter(child: SizedBox(height: 40)),
                 ],
               ),
+      ),
+    );
+  }
+
+  Widget _buildSortChip(String label, String sortKey, IconData icon) {
+    final isSelected = _sortOrder == sortKey;
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _sortOrder = sortKey;
+        });
+      },
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? primaryRed : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? primaryRed : cardBorder,
+            width: 1.2,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: primaryRed.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.02),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 14,
+              color: isSelected ? Colors.white : textDark,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w800,
+                color: isSelected ? Colors.white : textDark,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
