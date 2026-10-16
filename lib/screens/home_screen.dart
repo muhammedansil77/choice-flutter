@@ -4,6 +4,7 @@ import '../services/api_service.dart';
 import 'reward_store_screen.dart';
 import 'order_history_screen.dart';
 import 'wallet_screen.dart';
+import 'transfer_wallet_screen.dart';
 import 'profile_screen.dart';
 import 'login_screen.dart';
 
@@ -594,52 +595,60 @@ class _HomeContentState extends State<_HomeContent> {
                 children: [
                   // Card 1: Solid Red Wallet Card
                   Expanded(
-                    child: Container(
-                      height: 84,
-                      decoration: BoxDecoration(
-                        color: primaryRed,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: primaryRed.withValues(alpha: 0.25),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                      child: const Row(
-                        children: [
-                          Icon(
-                            Icons.account_balance_wallet_rounded,
-                            color: Colors.white,
-                            size: 38,
-                          ),
-                          Spacer(),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Wallet',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const TransferWalletScreen()),
+                        );
+                      },
+                      child: Container(
+                        height: 84,
+                        decoration: BoxDecoration(
+                          color: primaryRed,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: primaryRed.withValues(alpha: 0.25),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        child: const Row(
+                          children: [
+                            Icon(
+                              Icons.account_balance_wallet_rounded,
+                              color: Colors.white,
+                              size: 38,
+                            ),
+                            Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Wallet',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 2),
-                              Text(
-                                '₹ 0',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w900,
+                                SizedBox(height: 2),
+                                Text(
+                                  '₹ 0',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -718,7 +727,7 @@ class _HomeContentState extends State<_HomeContent> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const WalletScreen()),
+                        MaterialPageRoute(builder: (_) => const TransferWalletScreen()),
                       );
                     },
                   ),

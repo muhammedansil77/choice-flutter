@@ -466,6 +466,45 @@ class ApiService with ChangeNotifier {
     _cachedProducts = null;
   }
 
+  // CASH WITHDRAWAL METHODS (STORE COLLECTION)
+  Future<Map<String, dynamic>> requestCashWithdrawal(int points, {String? notes}) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/withdrawals/request'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $_token',
+      },
+      body: jsonEncode({
+        'points': points,
+        if (notes != null && notes.isNotEmpty) 'notes': notes,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      _cachedWallet = null;
+      await getMyWallet(forceRefresh: true).catchError((_) => <String, dynamic>{});
+      notifyListeners();
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(_parseErrorMessage(response, 'Failed to request cash payout'));
+    }
+  }
+
+  Future<List<dynamic>> getMyWithdrawals() async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/withdrawals/my'),
+      headers: {
+        'Authorization': 'Bearer $_token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(_parseErrorMessage(response, 'Failed to fetch withdrawals'));
+    }
+  }
+
   Future<void> logout() async {
     _token = null;
     _user = null;
