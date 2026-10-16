@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
@@ -64,18 +65,17 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     setState(() => _isLoading = true);
 
     try {
-      final email = _emailController.text.trim();
-      await context.read<ApiService>().sendRegisterOtp(email);
+      final phone = _phoneController.text.trim();
+      final name = _nameController.text.trim();
+      await context.read<ApiService>().sendPhoneOtp(phone, name: name);
 
       if (mounted) {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => OtpScreen(
-              name: _nameController.text.trim(),
-              email: email,
-              phoneNumber: _phoneController.text.trim(),
-              password: _passwordController.text,
+              name: name.isNotEmpty ? name : null,
+              phoneNumber: phone,
             ),
           ),
         );

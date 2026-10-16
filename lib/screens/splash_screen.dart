@@ -17,83 +17,151 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animController;
-  
-  // Staggered Animations
-  late Animation<double> _iconScale;
-  late Animation<double> _iconFade;
-  late Animation<double> _titleFade;
-  late Animation<Offset> _titleSlide;
-  late Animation<double> _badgeFade;
-  late Animation<Offset> _badgeSlide;
-  late Animation<double> _dotsFade;
+
+  // Staggered Animation Tracks (Total ~2.2s cinematic intro)
+  late Animation<double> _glowIntensity;
+  late Animation<double> _baseFade;
+  late Animation<double> _baseScale;
+
+  late Animation<double> _emblemFade;
+  late Animation<double> _emblemScale;
+  late Animation<double> _electricPulseProgress;
+  late Animation<double> _electricPulseOpacity;
+
+  late Animation<double> _choiceFade;
+  late Animation<double> _choiceSlide;
+
+  late Animation<double> _elecFade;
+  late Animation<double> _elecScaleX;
+
+  late Animation<double> _fullLogoFade;
+  late Animation<double> _sweepProgress;
+  late Animation<double> _sweepOpacity;
+
+  bool _isImagesPrecached = false;
 
   @override
   void initState() {
     super.initState();
 
-    // Set transparent status bar with dark icons for crisp white theme
+    // Dark luxury status and navigation bar
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: Color(0xFF030406),
+        systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
 
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1300),
+      duration: const Duration(milliseconds: 2200),
     );
 
-    // 1. Icon scales & fades in (0.0 -> 0.55)
-    _iconScale = Tween<double>(begin: 0.65, end: 1.0).animate(
+    // 1. Radial ambient gold glow & Base squircle (0.00 -> 0.32)
+    _glowIntensity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.0, 0.55, curve: Curves.easeOutBack),
+        curve: const Interval(0.00, 0.40, curve: Curves.easeOut),
       ),
     );
-    _iconFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _baseFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.0, 0.45, curve: Curves.easeOut),
+        curve: const Interval(0.00, 0.28, curve: Curves.easeOut),
       ),
     );
-
-    // 2. "CHOICE ELECTRICALS" slides & fades in (0.35 -> 0.75)
-    _titleFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _baseScale = Tween<double>(begin: 0.92, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.35, 0.75, curve: Curves.easeOutCubic),
-      ),
-    );
-    _titleSlide = Tween<Offset>(begin: const Offset(0, 0.25), end: Offset.zero).animate(
-      CurvedAnimation(
-        parent: _animController,
-        curve: const Interval(0.35, 0.75, curve: Curves.easeOutCubic),
+        curve: const Interval(0.00, 0.32, curve: Curves.easeOutCubic),
       ),
     );
 
-    // 3. "POS APP" badge slides & fades in (0.55 -> 0.92)
-    _badgeFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+    // 2. Electrical C + Plug Emblem: Fade in & scale 90% -> 100% (0.12 -> 0.46)
+    _emblemFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.55, 0.92, curve: Curves.easeOutCubic),
+        curve: const Interval(0.12, 0.42, curve: Curves.easeOut),
       ),
     );
-    _badgeSlide = Tween<Offset>(begin: const Offset(0, 0.35), end: Offset.zero).animate(
+    _emblemScale = Tween<double>(begin: 0.90, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.55, 0.92, curve: Curves.easeOutCubic),
+        curve: const Interval(0.12, 0.46, curve: Curves.easeOutCubic),
       ),
     );
 
-    // 4. Loading dots fade in (0.65 -> 1.0)
-    _dotsFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+    // 2b. Electric Pulse traveling through plug & cable (0.30 -> 0.54)
+    _electricPulseProgress = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.65, 1.0, curve: Curves.easeIn),
+        curve: const Interval(0.30, 0.54, curve: Curves.easeInOut),
+      ),
+    );
+    _electricPulseOpacity = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween<double>(begin: 0.0, end: 0.95), weight: 40),
+      TweenSequenceItem(tween: Tween<double>(begin: 0.95, end: 0.0), weight: 60),
+    ]).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.30, 0.54, curve: Curves.easeInOut),
+      ),
+    );
+
+    // 3. "choice" text: Smooth fade + upward movement (0.44 -> 0.68)
+    _choiceFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.44, 0.66, curve: Curves.easeOut),
+      ),
+    );
+    _choiceSlide = Tween<double>(begin: 10.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.44, 0.68, curve: Curves.easeOutCubic),
+      ),
+    );
+
+    // 4. "ELECTRICALS": Fade + subtle tracking expansion (0.58 -> 0.78)
+    _elecFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.58, 0.76, curve: Curves.easeOut),
+      ),
+    );
+    _elecScaleX = Tween<double>(begin: 0.94, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.58, 0.78, curve: Curves.easeOutCubic),
+      ),
+    );
+
+    // 5. Full unaltered original logo crossfade (0.70 -> 0.78)
+    _fullLogoFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.70, 0.78, curve: Curves.easeInOut),
+      ),
+    );
+
+    // 6. Subtle Gold Light Sweep across complete logo (0.72 -> 0.90)
+    _sweepProgress = Tween<double>(begin: -0.5, end: 1.5).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.72, 0.90, curve: Curves.easeInOutCubic),
+      ),
+    );
+    _sweepOpacity = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween<double>(begin: 0.0, end: 0.55), weight: 30),
+      TweenSequenceItem(tween: Tween<double>(begin: 0.55, end: 0.55), weight: 40),
+      TweenSequenceItem(tween: Tween<double>(begin: 0.55, end: 0.0), weight: 30),
+    ]).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: const Interval(0.72, 0.90, curve: Curves.easeInOut),
       ),
     );
 
@@ -101,15 +169,28 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _initializeAndNavigate();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isImagesPrecached) {
+      _isImagesPrecached = true;
+      precacheImage(const AssetImage('assets/images/logo.png'), context);
+      precacheImage(const AssetImage('assets/images/splash_base.png'), context);
+      precacheImage(const AssetImage('assets/images/splash_emblem.png'), context);
+      precacheImage(const AssetImage('assets/images/splash_choice.png'), context);
+      precacheImage(const AssetImage('assets/images/splash_electricals.png'), context);
+    }
+  }
+
   Future<void> _initializeAndNavigate() async {
     final apiService = context.read<ApiService>();
 
     try {
-      // Concurrently restore auth credentials from disk and show smooth splash animation
+      // Concurrently initialize auth and ensure minimum 2.3s splash experience
       final results = await Future.wait([
         apiService.loadPersistedToken(),
         SharedPreferences.getInstance(),
-        Future.delayed(const Duration(milliseconds: 1500)),
+        Future.delayed(const Duration(milliseconds: 2350)),
       ]);
 
       if (!mounted) return;
@@ -121,27 +202,35 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
       final bool isUserLoggedIn = hasTokenInService || (savedToken != null && savedToken.trim().isNotEmpty);
 
+      Widget destination;
       if (isUserLoggedIn) {
-        // Authenticated user -> Navigate straight to HomeScreen & clear navigation backstack
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-          (route) => false,
-        );
+        destination = const HomeScreen();
       } else if (!onboardingCompleted) {
-        // First time app launch -> OnboardingScreen
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-        );
+        destination = const OnboardingScreen();
       } else {
-        // Returning unauthenticated user -> LoginScreen
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        );
+        destination = const LoginScreen();
       }
+
+      Navigator.of(context).pushAndRemoveUntil(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 400),
+          pageBuilder: (_, animation, __) => destination,
+          transitionsBuilder: (_, animation, __, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+        (route) => false,
+      );
     } catch (_) {
       if (mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 350),
+            pageBuilder: (_, __, ___) => const LoginScreen(),
+            transitionsBuilder: (_, animation, __, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
         );
       }
     }
@@ -155,215 +244,244 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    // Brand Color Palette
-    const Color primaryBlue = Color(0xFF087FEF);
-    const Color darkNavy = Color(0xFF0B3B82);
-    const Color lightBlueBg = Color(0xFFEFF6FF);
+    const Color goldAccent = Color(0xFFE5A93C);
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              Color(0xFFF8FAFC),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Column(
-                children: [
-                  const Spacer(flex: 3),
+      backgroundColor: const Color(0xFF030406),
+      body: AnimatedBuilder(
+        animation: _animController,
+        builder: (context, _) {
+          return Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color(0xFF030406),
+              gradient: RadialGradient(
+                center: Alignment.center,
+                radius: 0.90,
+                colors: [
+                  goldAccent.withValues(alpha: 0.08 * _glowIntensity.value),
+                  const Color(0xFF13100A).withValues(alpha: 0.28 * _glowIntensity.value),
+                  const Color(0xFF06070A),
+                  const Color(0xFF030406),
+                ],
+                stops: const [0.0, 0.40, 0.72, 1.0],
+              ),
+            ),
+            child: SafeArea(
+              child: Center(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Responsive sizing preserving exact 1:1 aspect ratio across all devices
+                    final double size = (constraints.maxWidth * 0.50).clamp(185.0, 225.0);
 
-                  // 1. Minimal Electrical Icon Emblem
-                  FadeTransition(
-                    opacity: _iconFade,
-                    child: ScaleTransition(
-                      scale: _iconScale,
-                      child: Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              primaryBlue,
-                              darkNavy,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(22),
-                          boxShadow: [
-                            BoxShadow(
-                              color: primaryBlue.withValues(alpha: 0.25),
-                              blurRadius: 24,
-                              offset: const Offset(0, 10),
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Subtle electrical spark ring
-                              Container(
-                                width: 44,
-                                height: 44,
+                    return SizedBox(
+                      width: size,
+                      height: size,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // 1. BASE SQUIRCLE WITH SUBTLE GLOW SHADOW
+                          Opacity(
+                            opacity: _baseFade.value,
+                            child: Transform.scale(
+                              scale: _baseScale.value,
+                              child: Container(
+                                width: size,
+                                height: size,
                                 decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                    width: 1.5,
+                                  borderRadius: BorderRadius.circular(size * 0.20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: goldAccent.withValues(alpha: 0.16 * _glowIntensity.value),
+                                      blurRadius: 36,
+                                      offset: const Offset(0, 12),
+                                      spreadRadius: 2,
+                                    ),
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.65),
+                                      blurRadius: 24,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(size * 0.20),
+                                  child: Image.asset(
+                                    'assets/images/splash_base.png',
+                                    width: size,
+                                    height: size,
+                                    fit: BoxFit.contain,
+                                    filterQuality: FilterQuality.medium,
                                   ),
                                 ),
                               ),
-                              // Sharp Electrical Bolt
-                              const Icon(
-                                Icons.bolt_rounded,
-                                size: 40,
-                                color: Colors.white,
+                            ),
+                          ),
+
+                          // 2. EMBLEM: ELECTRICAL C + PLUG (FADE IN + SCALE 90% -> 100%)
+                          if (_emblemFade.value > 0.0)
+                            Opacity(
+                              opacity: _emblemFade.value,
+                              child: Transform.scale(
+                                scale: _emblemScale.value,
+                                child: SizedBox(
+                                  width: size,
+                                  height: size,
+                                  child: Image.asset(
+                                    'assets/images/splash_emblem.png',
+                                    width: size,
+                                    height: size,
+                                    fit: BoxFit.contain,
+                                    filterQuality: FilterQuality.medium,
+                                  ),
+                                ),
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
+
+                          // 2b. SUBTLE GOLDEN LIGHT / ELECTRIC PULSE TRAVELING THROUGH PLUG & CABLE
+                          if (_electricPulseOpacity.value > 0.0)
+                            Opacity(
+                              opacity: _electricPulseOpacity.value,
+                              child: Transform.scale(
+                                scale: _emblemScale.value,
+                                child: ShaderMask(
+                                  blendMode: BlendMode.srcATop,
+                                  shaderCallback: (bounds) {
+                                    final double p = _electricPulseProgress.value;
+                                    return LinearGradient(
+                                      begin: Alignment.bottomLeft,
+                                      end: Alignment.topRight,
+                                      stops: [
+                                        (p - 0.25).clamp(0.0, 1.0),
+                                        p.clamp(0.0, 1.0),
+                                        (p + 0.25).clamp(0.0, 1.0),
+                                      ],
+                                      colors: [
+                                        Colors.transparent,
+                                        const Color(0xFFFFF2B8).withValues(alpha: 0.90),
+                                        Colors.transparent,
+                                      ],
+                                    ).createShader(bounds);
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/splash_emblem.png',
+                                    width: size,
+                                    height: size,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          // 3. "choice" TEXT (SMOOTH FADE + SLIGHT UPWARD MOTION)
+                          if (_choiceFade.value > 0.0)
+                            Transform.translate(
+                              offset: Offset(0, _choiceSlide.value),
+                              child: Opacity(
+                                opacity: _choiceFade.value,
+                                child: SizedBox(
+                                  width: size,
+                                  height: size,
+                                  child: Image.asset(
+                                    'assets/images/splash_choice.png',
+                                    width: size,
+                                    height: size,
+                                    fit: BoxFit.contain,
+                                    filterQuality: FilterQuality.medium,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          // 4. "ELECTRICALS" (FADE + SUBTLE TRACKING/LETTER-SPACING EFFECT)
+                          if (_elecFade.value > 0.0)
+                            Transform.scale(
+                              scaleX: _elecScaleX.value,
+                              scaleY: 1.0,
+                              child: Opacity(
+                                opacity: _elecFade.value,
+                                child: SizedBox(
+                                  width: size,
+                                  height: size,
+                                  child: Image.asset(
+                                    'assets/images/splash_electricals.png',
+                                    width: size,
+                                    height: size,
+                                    fit: BoxFit.contain,
+                                    filterQuality: FilterQuality.medium,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          // 5. COMPLETE ORIGINAL LOGO OVERLAY (Ensures 100% exact original artwork)
+                          if (_fullLogoFade.value > 0.0)
+                            Opacity(
+                              opacity: _fullLogoFade.value,
+                              child: Container(
+                                width: size,
+                                height: size,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(size * 0.20),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(size * 0.20),
+                                  child: Image.asset(
+                                    'assets/images/logo.png',
+                                    width: size,
+                                    height: size,
+                                    fit: BoxFit.contain,
+                                    filterQuality: FilterQuality.medium,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          // 6. VERY SUBTLE GOLD METALLIC LIGHT SWEEP ACROSS COMPLETE LOGO
+                          if (_sweepOpacity.value > 0.0)
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(size * 0.20),
+                              child: Opacity(
+                                opacity: _sweepOpacity.value,
+                                child: ShaderMask(
+                                  blendMode: BlendMode.srcATop,
+                                  shaderCallback: (bounds) {
+                                    final double sp = _sweepProgress.value;
+                                    return LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      stops: [
+                                        (sp - 0.22).clamp(0.0, 1.0),
+                                        sp.clamp(0.0, 1.0),
+                                        (sp + 0.22).clamp(0.0, 1.0),
+                                      ],
+                                      colors: [
+                                        Colors.transparent,
+                                        const Color(0xFFFFE8A3).withValues(alpha: 0.50),
+                                        Colors.transparent,
+                                      ],
+                                    ).createShader(bounds);
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/logo.png',
+                                    width: size,
+                                    height: size,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // 2. CHOICE ELECTRICALS Title
-                  FadeTransition(
-                    opacity: _titleFade,
-                    child: SlideTransition(
-                      position: _titleSlide,
-                      child: const Text(
-                        'CHOICE ELECTRICALS',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 2.5,
-                          color: darkNavy,
-                          height: 1.2,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // 3. POS APP Subtitle Badge
-                  FadeTransition(
-                    opacity: _badgeFade,
-                    child: SlideTransition(
-                      position: _badgeSlide,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: lightBlueBg,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: primaryBlue.withValues(alpha: 0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: const Text(
-                          'POS APP',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 3.5,
-                            color: primaryBlue,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const Spacer(flex: 3),
-
-                  // 4. Subtle 3-Dot Loading Indicator near bottom
-                  FadeTransition(
-                    opacity: _dotsFade,
-                    child: const Padding(
-                      padding: EdgeInsets.only(bottom: 24.0),
-                      child: _PulsingDotsIndicator(color: primaryBlue),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Subtle Animated 3-Dot Indicator (`• • •`)
-class _PulsingDotsIndicator extends StatefulWidget {
-  final Color color;
-
-  const _PulsingDotsIndicator({required this.color});
-
-  @override
-  State<_PulsingDotsIndicator> createState() => _PulsingDotsIndicatorState();
-}
-
-class _PulsingDotsIndicatorState extends State<_PulsingDotsIndicator>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, _) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: List.generate(3, (index) {
-            final double progress = ((_controller.value + (index * 0.3)) % 1.0);
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 3.5),
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: widget.color.withValues(alpha: 0.25 + (progress * 0.75)),
+                    );
+                  },
+                ),
               ),
-            );
-          }),
-        );
-      },
+            ),
+          );
+        },
+      ),
     );
   }
 }

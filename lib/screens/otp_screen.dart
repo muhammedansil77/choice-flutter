@@ -4,19 +4,18 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
 import 'home_screen.dart';
+import 'profile_setup_screen.dart';
 
 class OtpScreen extends StatefulWidget {
-  final String name;
-  final String email;
   final String phoneNumber;
-  final String password;
+  final String? name;
+  final String? initialDevOtp;
 
   const OtpScreen({
     super.key,
-    required this.name,
-    required this.email,
     required this.phoneNumber,
-    required this.password,
+    this.name,
+    this.initialDevOtp,
   });
 
   @override
@@ -32,24 +31,44 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
   int _timerSeconds = 30;
   Timer? _timer;
   String? _errorMessage;
+  String? _currentDevOtp;
 
   late AnimationController _animController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  late Animation<double> _scaleAnimation;
+
+  // Choice Electricals Brand Design System Tokens
+  static const Color darkNavy = Color(0xFF0F172A);         // Deep navy/black primary
+  static const Color goldAccent = Color(0xFFD4AF37);       // Choice Electricals Brand Gold
+  static const Color goldAccentDark = Color(0xFFC59A27);   // Warm gold gradient end
+  static const Color secondaryGray = Color(0xFF64748B);    // Slate-500 neutral text
+  static const Color inputBorder = Color(0xFFE2E8F0);      // Subtle inactive border
+  static const Color pageBg = Color(0xFFFAFAFA);          // Very soft clean off-white
 
   @override
   void initState() {
     super.initState();
+    _currentDevOtp = widget.initialDevOtp;
+    if (_currentDevOtp != null && _currentDevOtp!.length == 6) {
+      for (int i = 0; i < 6; i++) {
+        _otpControllers[i].text = _currentDevOtp![i];
+      }
+    }
     _startResendTimer();
 
+    // Fast, professional micro-animation (350 ms)
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 350),
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
     );
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.04), end: Offset.zero).animate(
+    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.03), end: Offset.zero).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
+    );
+    _scaleAnimation = Tween<double>(begin: 0.94, end: 1.0).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
     );
     _animController.forward();
@@ -57,7 +76,9 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     // Auto-focus first digit field after frame renders
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _focusNodes[0].requestFocus();
+        if (_currentDevOtp == null || _currentDevOtp!.length != 6) {
+          _focusNodes[0].requestFocus();
+        }
       }
     });
   }
@@ -98,10 +119,18 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     return _otpCode.length == 6 && RegExp(r'^\d{6}$').hasMatch(_otpCode);
   }
 
+  String get _formattedPhone {
+    final clean = widget.phoneNumber.replaceAll(RegExp(r'\D'), '');
+    if (clean.length == 10) {
+      return '+91 ${clean.substring(0, 5)} ${clean.substring(5)}';
+    }
+    return '+91 ${widget.phoneNumber}';
+  }
+
   void _handleOtpInput(int index, String value) {
     setState(() => _errorMessage = null);
 
-    // Handle Paste 6 digits
+    // Handle Pasted 6 digits
     if (value.length > 1) {
       final digits = value.replaceAll(RegExp(r'\D'), '');
       if (digits.length >= 6) {
@@ -110,6 +139,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
         }
         _focusNodes[5].requestFocus();
         setState(() {});
+        _handleVerifyAndLogin();
         return;
       }
     }
@@ -120,17 +150,26 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
         _focusNodes[index + 1].requestFocus();
       } else {
         _focusNodes[index].unfocus();
-      }
-    } else {
-      if (index > 0) {
-        _focusNodes[index - 1].requestFocus();
+        if (_isOtpComplete) {
+          _handleVerifyAndLogin();
+        }
       }
     }
-
     setState(() {});
   }
 
-  Future<void> _handleVerifyAndRegister() async {
+  void _handleBackspace(int index) {
+    setState(() => _errorMessage = null);
+    if (_otpControllers[index].text.isEmpty && index > 0) {
+      _focusNodes[index - 1].requestFocus();
+      _otpControllers[index - 1].text = '';
+    } else {
+      _otpControllers[index].text = '';
+    }
+    setState(() {});
+  }
+
+  Future<void> _handleVerifyAndLogin() async {
     if (!_isOtpComplete || _isLoading) return;
 
     setState(() {
@@ -139,26 +178,44 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     });
 
     try {
-      await context.read<ApiService>().registerWithOtp(
-            name: widget.name,
-            email: widget.email,
-            password: widget.password,
+      final res = await context.read<ApiService>().verifyPhoneOtp(
             phoneNumber: widget.phoneNumber,
             otp: _otpCode,
+            name: widget.name,
           );
 
       if (mounted) {
-        _showSnackBar('Account registered successfully!', isError: false);
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-          (route) => false,
-        );
+        final isNew = res['isNewUser'] == true;
+        if (isNew) {
+          _showSnackBar('Welcome to Choice Electricals! Let\'s set up your profile.', isError: false);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (_) => ProfileSetupScreen(phoneNumber: widget.phoneNumber),
+            ),
+            (route) => false,
+          );
+        } else {
+          _showSnackBar('Logged in successfully!', isError: false);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
+            (route) => false,
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
-        final cleanMsg = e.toString().replaceAll('Exception: ', '');
-        setState(() => _errorMessage = cleanMsg);
-        _showSnackBar(cleanMsg, isError: true);
+        final rawMsg = e.toString().replaceAll('Exception: ', '').trim();
+        final lower = rawMsg.toLowerCase();
+        String friendlyError;
+        if (lower.contains('expired')) {
+          friendlyError = 'This code has expired. Request a new code.';
+        } else if (lower.contains('invalid') || lower.contains('incorrect') || lower.contains('wrong')) {
+          friendlyError = 'The code you entered is incorrect. Please try again.';
+        } else {
+          friendlyError = "We couldn't verify the code. Check your connection and try again.";
+        }
+        setState(() => _errorMessage = friendlyError);
+        _showSnackBar(friendlyError, isError: true);
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -174,9 +231,22 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     });
 
     try {
-      await context.read<ApiService>().sendRegisterOtp(widget.email);
+      final res = await context.read<ApiService>().sendPhoneOtp(
+            widget.phoneNumber,
+            name: widget.name,
+          );
+
       if (mounted) {
-        _showSnackBar('A new verification code has been sent to ${widget.email}');
+        if (res['devOtp'] != null) {
+          _currentDevOtp = res['devOtp'].toString();
+          if (_currentDevOtp!.length == 6) {
+            for (int i = 0; i < 6; i++) {
+              _otpControllers[i].text = _currentDevOtp![i];
+            }
+          }
+        }
+        final devCode = res['devOtp'] != null ? ' (Dev OTP: ${res['devOtp']})' : '';
+        _showSnackBar('New verification code sent to $_formattedPhone$devCode');
         _startResendTimer();
       }
     } catch (e) {
@@ -219,309 +289,438 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    // 2026 Choice Electricals Business Palette
-    const Color primaryBlue = Color(0xFF087FEF);     // Brand Primary Blue
-    const Color darkNavy = Color(0xFF0B3B82);        // Brand Navy Title
-    const Color secondaryGray = Color(0xFF6B7280);   // Secondary Text
-    const Color lightBlueBg = Color(0xFFEAF5FF);     // Icon Soft Fill
-    const Color inputBorder = Color(0xFFE5E7EB);     // Field Neutral Border
-    const Color pageBg = Colors.white;                // Page Background
-
     return Scaffold(
       backgroundColor: pageBg,
       body: SafeArea(
-        child: Center(
-          child: SlideTransition(
-            position: _slideAnimation,
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-                child: Container(
-                  constraints: const BoxConstraints(maxWidth: 450),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: darkNavy.withOpacity(0.06),
-                        blurRadius: 30,
-                        offset: const Offset(0, 12),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 28.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // COMPACT HEADER
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () => Navigator.pop(context),
+        child: SlideTransition(
+          position: _slideAnimation,
+          child: FadeTransition(
+            opacity: _fadeAnimation,
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 380),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // 1. INDEPENDENT TOP-LEFT BACK BUTTON (No shared row, zero overflow)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
-                              child: Container(
-                                padding: const EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(
-                                  color: pageBg,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: inputBorder),
+                              border: Border.all(color: inputBorder),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.03),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
                                 ),
-                                child: const Icon(
-                                  Icons.arrow_back_ios_new_rounded,
-                                  color: darkNavy,
-                                  size: 18,
-                                ),
-                              ),
+                              ],
                             ),
-                            const Spacer(),
-                            const Text(
-                              'Email Verification',
-                              style: TextStyle(
+                            child: const Center(
+                              child: Icon(
+                                Icons.arrow_back_ios_new_rounded,
                                 color: darkNavy,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                letterSpacing: -0.3,
+                                size: 16,
                               ),
                             ),
-                            const Spacer(),
-                            const SizedBox(width: 36),
-                          ],
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // VERIFICATION ICON
-                        Container(
-                          width: 88,
-                          height: 88,
-                          decoration: const BoxDecoration(
-                            color: lightBlueBg,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.mark_email_read_rounded,
-                            size: 42,
-                            color: primaryBlue,
                           ),
                         ),
+                      ),
 
-                        const SizedBox(height: 20),
+                      const SizedBox(height: 16),
 
-                        // MAIN HEADING
-                        const Text(
-                          'Verify Your Email',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: darkNavy,
-                            letterSpacing: -0.4,
+                      // 2. CHOICE ELECTRICALS LOGO (Centered, ~82 px, exact authentic asset)
+                      ScaleTransition(
+                        scale: _scaleAnimation,
+                        child: Container(
+                          width: 82,
+                          height: 82,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: goldAccent.withValues(alpha: 0.22),
+                                blurRadius: 22,
+                                spreadRadius: 1,
+                                offset: const Offset(0, 6),
+                              ),
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.12),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: Image.asset(
+                              'assets/images/logo.png',
+                              width: 82,
+                              height: 82,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                      ),
 
-                        // DESCRIPTION & DYNAMIC EMAIL
-                        const Text(
-                          'Enter the 6-digit code sent to:',
+                      const SizedBox(height: 20),
+
+                      // 3. HEADING: Verify your mobile number (Allows natural wrapping)
+                      const Text(
+                        'Verify your mobile number',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: darkNavy,
+                          letterSpacing: -0.4,
+                          height: 1.25,
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      // 4. SHORT DESCRIPTION
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 320),
+                        child: const Text(
+                          'Enter the 6-digit code we sent to your phone.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: secondaryGray,
                             fontSize: 15,
+                            color: secondaryGray,
+                            height: 1.4,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          widget.email,
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: primaryBlue,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // 5. PHONE NUMBER INFORMATION CARD
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: inputBorder, width: 1.2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.03),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-
-                        const SizedBox(height: 28),
-
-                        // RESPONSIVE 6-DIGIT OTP INPUTS (ZERO OVERFLOW)
-                        Row(
-                          children: List.generate(6, (index) {
-                            final bool isFilled = _otpControllers[index].text.isNotEmpty;
-                            final bool isFocused = _focusNodes[index].hasFocus;
-
-                            return Expanded(
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 3.5),
-                                height: 54,
-                                child: KeyboardListener(
-                                  focusNode: FocusNode(),
-                                  onKeyEvent: (event) {
-                                    if (event is KeyDownEvent &&
-                                        event.logicalKey == LogicalKeyboardKey.backspace &&
-                                        _otpControllers[index].text.isEmpty &&
-                                        index > 0) {
-                                      _focusNodes[index - 1].requestFocus();
-                                    }
-                                  },
-                                  child: TextField(
-                                    controller: _otpControllers[index],
-                                    focusNode: _focusNodes[index],
-                                    keyboardType: TextInputType.number,
-                                    textAlign: TextAlign.center,
-                                    maxLength: 1,
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w700,
-                                      color: isFilled ? darkNavy : primaryBlue,
-                                    ),
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly,
-                                    ],
-                                    decoration: InputDecoration(
-                                      counterText: '',
-                                      contentPadding: EdgeInsets.zero,
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(14),
-                                        borderSide: BorderSide(
-                                          color: isFilled ? primaryBlue : inputBorder,
-                                          width: isFilled ? 1.5 : 1.0,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(14),
-                                        borderSide: const BorderSide(
-                                          color: primaryBlue,
-                                          width: 2.0,
-                                        ),
-                                      ),
-                                      errorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(14),
-                                        borderSide: const BorderSide(
-                                          color: Color(0xFFEF4444),
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                      filled: true,
-                                      fillColor: isFocused
-                                          ? lightBlueBg.withOpacity(0.5)
-                                          : (isFilled ? Colors.white : pageBg),
-                                    ),
-                                    onChanged: (value) => _handleOtpInput(index, value),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  'Code sent to',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: secondaryGray,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                              ),
-                            );
-                          }),
-                        ),
-
-                        // ERROR MESSAGE BANNER
-                        if (_errorMessage != null) ...[
-                          const SizedBox(height: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFEF2F2),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: const Color(0xFFFCA5A5)),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.error_outline_rounded, size: 16, color: Color(0xFFEF4444)),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    _errorMessage!,
-                                    style: const TextStyle(
-                                      color: Color(0xFFDC2626),
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  _formattedPhone,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: darkNavy,
+                                    letterSpacing: 0.4,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-
-                        const SizedBox(height: 28),
-
-                        // VERIFY & REGISTER BUTTON
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: _isOtpComplete ? primaryBlue : const Color(0xFF94A3B8),
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              shadowColor: _isOtpComplete ? primaryBlue.withOpacity(0.3) : Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                            InkWell(
+                              onTap: () => Navigator.pop(context),
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF8FAFC),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: inputBorder),
+                                ),
+                                child: const Icon(
+                                  Icons.edit_outlined,
+                                  size: 16,
+                                  color: goldAccentDark,
+                                ),
                               ),
                             ),
-                            onPressed: (_isOtpComplete && !_isLoading) ? _handleVerifyAndRegister : null,
-                            child: _isLoading
-                                ? const SizedBox(
-                                    width: 22,
-                                    height: 22,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2.5,
-                                    ),
-                                  )
-                                : const Text(
-                                    'VERIFY & REGISTER',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                          ),
+                          ],
                         ),
+                      ),
 
-                        const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                        // RESEND OTP SECTION
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Didn't receive the code? ",
-                              style: TextStyle(
-                                color: secondaryGray,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            _isResending
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: primaryBlue,
+                      // 6. SIX INDIVIDUAL OTP BOXES (Using Expanded to mathematically eliminate overflow)
+                      Row(
+                        children: List.generate(6, (index) {
+                          final isFocused = _focusNodes[index].hasFocus;
+                          final isFilled = _otpControllers[index].text.isNotEmpty;
+                          final hasError = _errorMessage != null;
+
+                          return Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 3.5),
+                              child: SizedBox(
+                                height: 52,
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 180),
+                                  decoration: BoxDecoration(
+                                    color: isFocused
+                                        ? Colors.white
+                                        : (isFilled ? const Color(0xFFFDFBF7) : Colors.white),
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                      color: hasError
+                                          ? const Color(0xFFEF4444)
+                                          : (isFocused
+                                              ? goldAccent
+                                              : (isFilled ? goldAccent.withValues(alpha: 0.65) : inputBorder)),
+                                      width: (isFocused || isFilled) ? 1.8 : 1.2,
                                     ),
-                                  )
-                                : GestureDetector(
-                                    onTap: _timerSeconds == 0 ? _handleResendOtp : null,
-                                    child: Text(
-                                      _timerSeconds > 0 ? 'Resend in ${_timerSeconds}s' : 'Resend Code',
-                                      style: TextStyle(
-                                        color: _timerSeconds == 0 ? primaryBlue : secondaryGray,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 14,
+                                    boxShadow: isFocused
+                                        ? [
+                                            BoxShadow(
+                                              color: goldAccent.withValues(alpha: 0.24),
+                                              blurRadius: 10,
+                                              spreadRadius: 1,
+                                            ),
+                                          ]
+                                        : [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(alpha: 0.02),
+                                              blurRadius: 4,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                  ),
+                                  child: Center(
+                                    child: KeyboardListener(
+                                      focusNode: FocusNode(),
+                                      onKeyEvent: (event) {
+                                        if (event is KeyDownEvent &&
+                                            event.logicalKey == LogicalKeyboardKey.backspace) {
+                                          _handleBackspace(index);
+                                        }
+                                      },
+                                      child: TextFormField(
+                                        controller: _otpControllers[index],
+                                        focusNode: _focusNodes[index],
+                                        keyboardType: TextInputType.number,
+                                        textAlign: TextAlign.center,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly,
+                                          LengthLimitingTextInputFormatter(6),
+                                        ],
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w700,
+                                          color: hasError ? const Color(0xFFEF4444) : darkNavy,
+                                        ),
+                                        decoration: const InputDecoration(
+                                          contentPadding: EdgeInsets.zero,
+                                          border: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          errorBorder: InputBorder.none,
+                                          focusedErrorBorder: InputBorder.none,
+                                        ),
+                                        onChanged: (val) => _handleOtpInput(index, val),
                                       ),
                                     ),
                                   ),
-                          ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+
+                      // 7. INLINE ERROR STATE (Subtle pill, non-intrusive)
+                      if (_errorMessage != null) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFEF2F2),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: const Color(0xFFFCA5A5)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.error_outline_rounded, color: Color(0xFFEF4444), size: 15),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  _errorMessage!,
+                                  style: const TextStyle(
+                                    color: Color(0xFFEF4444),
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
-                    ),
+
+                      const SizedBox(height: 24),
+
+                      // 8. BRANDED FULL-WIDTH CTA BUTTON: Verify & Continue →
+                      SizedBox(
+                        width: double.infinity,
+                        height: 54,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          decoration: BoxDecoration(
+                            gradient: _isOtpComplete
+                                ? const LinearGradient(
+                                    colors: [Color(0xFFE5BE4A), goldAccentDark],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  )
+                                : null,
+                            color: _isOtpComplete ? null : const Color(0xFFF1F5F9),
+                            borderRadius: BorderRadius.circular(15),
+                            border: _isOtpComplete
+                                ? null
+                                : Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
+                            boxShadow: _isOtpComplete
+                                ? [
+                                    BoxShadow(
+                                      color: goldAccent.withValues(alpha: 0.32),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 5),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(15),
+                              onTap: (_isOtpComplete && !_isLoading) ? _handleVerifyAndLogin : null,
+                              child: Center(
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        width: 22,
+                                        height: 22,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          color: darkNavy,
+                                        ),
+                                      )
+                                    : Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Verify & Continue',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w700,
+                                              letterSpacing: 0.2,
+                                              color: _isOtpComplete
+                                                  ? darkNavy
+                                                  : const Color(0xFF94A3B8),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Icon(
+                                            Icons.arrow_forward_rounded,
+                                            size: 20,
+                                            color: _isOtpComplete
+                                                ? darkNavy
+                                                : const Color(0xFF94A3B8),
+                                          ),
+                                        ],
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 22),
+
+                      // 9. RESEND SECTION (Subtle & Elegant)
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            "Didn't receive the code?",
+                            style: TextStyle(
+                              color: secondaryGray,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          _timerSeconds > 0
+                              ? Text(
+                                  'Resend in ${_timerSeconds.toString().padLeft(2, '0')}s',
+                                  style: const TextStyle(
+                                    color: secondaryGray,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    letterSpacing: 0.2,
+                                  ),
+                                )
+                              : InkWell(
+                                  onTap: _isResending ? null : _handleResendOtp,
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    child: _isResending
+                                        ? const SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: goldAccentDark,
+                                            ),
+                                          )
+                                        : const Text(
+                                            'Resend code',
+                                            style: TextStyle(
+                                              color: darkNavy,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 14,
+                                              decoration: TextDecoration.underline,
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+                    ],
                   ),
                 ),
               ),

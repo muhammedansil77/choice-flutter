@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService with ChangeNotifier {
-  final String _baseUrl = 'https://api.anzil.online/api';
+  final String _baseUrl = 'http://16.176.101.134/api';
   String? _token;
   Map<String, dynamic>? _user;
 
@@ -73,13 +73,70 @@ class ApiService with ChangeNotifier {
       }
     } catch (_) {
       if (response.statusCode == 404) {
-        return 'Backend route not found (404). Please restart/redeploy your Node backend server on api.anzil.online.';
+        return 'Backend route not found (404). Please check your Node backend server.';
       }
       if (response.body.startsWith('<!DOCTYPE') || response.body.startsWith('<html')) {
         return 'Server error (${response.statusCode}). Backend returned HTML response instead of JSON.';
       }
     }
     return '$fallback (${response.statusCode})';
+  }
+
+  Future<Map<String, dynamic>> sendPhoneOtp(String phoneNumber, {String? name}) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/auth/send-phone-otp'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'phoneNumber': phoneNumber,
+        if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(_parseErrorMessage(response, 'Failed to send verification SMS'));
+    }
+  }
+
+  Future<Map<String, dynamic>> verifyPhoneOtp({
+    required String phoneNumber,
+    required String otp,
+    String? name,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/auth/verify-phone-otp'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'phoneNumber': phoneNumber,
+        'otp': otp,
+        if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final resData = jsonDecode(response.body);
+      _token = resData['token'];
+      _user = resData;
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', _token!);
+      await prefs.setString('user', jsonEncode(_user));
+
+      notifyListeners();
+      return resData;
+    } else {
+      throw Exception(_parseErrorMessage(response, 'Invalid verification code'));
+    }
+  }
+
+  Future<void> updateLocalProfileName(String newName) async {
+    if (_user != null) {
+      _user!['name'] = newName.trim();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user', jsonEncode(_user));
+      notifyListeners();
+    }
   }
 
   Future<void> sendRegisterOtp(String email) async {
@@ -205,7 +262,7 @@ class ApiService with ChangeNotifier {
     _cachedCategories = null;
   }
 
-  Future<void> buyProduct(String productId, {int quantity = 1}) async {
+  Future<Map<String, dynamic>?> buyProduct(String productId, {int quantity = 1}) async {
     final response = await http.post(
       Uri.parse('$_baseUrl/orders/buy'),
       headers: {
@@ -223,6 +280,13 @@ class ApiService with ChangeNotifier {
     }
     _cachedWallet = null;
     _cachedProducts = null;
+    // Asynchronously refresh wallet and notify listeners
+    getMyWallet(forceRefresh: true).catchError((_) => <String, dynamic>{});
+    try {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<Map<String, dynamic>> getMyWallet({bool forceRefresh = false}) async {
@@ -237,6 +301,15 @@ class ApiService with ChangeNotifier {
 
     if (response.statusCode == 200) {
       _cachedWallet = jsonDecode(response.body);
+      if (_user != null && _cachedWallet != null) {
+        final dynamic bal = _cachedWallet!['coinBalance'] ?? _cachedWallet!['balance'];
+        if (bal != null) {
+          _user!['coinBalance'] = (bal as num).toInt();
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user', jsonEncode(_user));
+          notifyListeners();
+        }
+      }
       return _cachedWallet!;
     } else {
       throw Exception('Failed to load wallet');

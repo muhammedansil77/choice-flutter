@@ -194,7 +194,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           backgroundColor: primaryBlue,
                           foregroundColor: Colors.white,
                           elevation: 0,
-                          shadowColor: primaryBlue.withOpacity(0.3),
+                          shadowColor: primaryBlue.withValues(alpha: 0.3),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -290,7 +290,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: primaryColor.withOpacity(0.2),
+            color: primaryColor.withValues(alpha: 0.2),
             blurRadius: 40,
             spreadRadius: 8,
             offset: const Offset(0, 10),
@@ -305,7 +305,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             height: 150,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 2),
             ),
           ),
           const Icon(
@@ -349,7 +349,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF163B75).withOpacity(0.06),
+            color: const Color(0xFF163B75).withValues(alpha: 0.06),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -398,9 +398,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   /// Screen 3 Illustration: Business POS & Wallet Dashboard Card
+  /// Screen 3 Illustration: Business POS & Wallet Dashboard Card
   Widget _buildScreen3Illustration(Color primaryColor) {
     return Container(
-      width: 260,
+      width: 275,
       height: 190,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -408,7 +409,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: primaryColor.withOpacity(0.2),
+            color: primaryColor.withValues(alpha: 0.2),
             blurRadius: 24,
             offset: const Offset(0, 10),
           ),
@@ -421,8 +422,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: const [
+              const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
                   Icon(Icons.point_of_sale_rounded, color: Colors.white, size: 20),
                   SizedBox(width: 8),
                   Text(
@@ -438,7 +440,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
@@ -450,9 +452,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
 
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
@@ -466,26 +468,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: const Icon(Icons.monetization_on_outlined, color: Colors.white, size: 18),
                 ),
                 const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'Store Coin Wallet',
-                      style: TextStyle(color: Colors.white70, fontSize: 11),
-                    ),
-                    Text(
-                      'Manage Business & Coins',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
-                    ),
-                  ],
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Store Coin Wallet',
+                        style: TextStyle(color: Colors.white70, fontSize: 11),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        'Manage Business & Coins',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
 
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Orders & Sales Tracked',
                 style: TextStyle(color: Colors.white70, fontSize: 11),
@@ -504,7 +517,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: accentColor.withOpacity(0.1),
+            color: accentColor.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: accentColor, size: 24),
