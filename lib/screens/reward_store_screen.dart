@@ -63,8 +63,13 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
 
     // Apply Low to High or High to Low Points Sorting
     num getPoints(dynamic p) {
-      final val = p['priceInCoins'] ?? p['coinPrice'] ?? 0;
-      return (val is num) ? val : (num.tryParse(val.toString()) ?? 0);
+      if (p == null) return 0;
+      final val = p['priceInCoins'] ?? p['coinPrice'] ?? p['price'] ?? 0;
+      if (val is num) return val;
+      if (val is String) {
+        return num.tryParse(val) ?? 0;
+      }
+      return 0;
     }
 
     if (_sortOrder == 'low_to_high') {
@@ -80,7 +85,17 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
       return groups;
     }
 
-    // First use defined categories from server
+    // When sorting is active (Low to High or High to Low),
+    // display all products globally across the store in true sorted order
+    if (_sortOrder == 'low_to_high') {
+      groups['POINTS: LOW TO HIGH'] = list;
+      return groups;
+    } else if (_sortOrder == 'high_to_low') {
+      groups['POINTS: HIGH TO LOW'] = list;
+      return groups;
+    }
+
+    // Default view: Group by defined categories from server
     for (final cat in _categories) {
       final catName = (cat['name'] ?? '').toString().trim();
       if (catName.isNotEmpty) {
@@ -312,7 +327,7 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                       child: _buildCategorySection(
                         categoryName: entry.key,
                         products: entry.value,
-                        isFilteredView: _selectedCategoryFilter != null,
+                        isFilteredView: _selectedCategoryFilter != null || _sortOrder != 'default',
                       ),
                     ),
 
@@ -329,6 +344,9 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
       onTap: () {
         setState(() {
           _sortOrder = sortKey;
+          if (sortKey != 'default') {
+            _selectedCategoryFilter = null;
+          }
         });
       },
       borderRadius: BorderRadius.circular(20),
@@ -504,6 +522,25 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (product['category'] != null && product['category'].toString().trim().isNotEmpty) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        margin: const EdgeInsets.only(bottom: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          product['category'].toString().trim().toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w700,
+                            color: textMuted,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ),
+                    ],
                     // Title
                     Text(
                       title,
