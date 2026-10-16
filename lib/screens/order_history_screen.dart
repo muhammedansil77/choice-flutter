@@ -664,12 +664,12 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     } else if (status == 'rejected') {
       statusBg = const Color(0xFFFEF2F2);
       statusColor = primaryRed;
-      statusLabel = 'REJECTED / REFUNDED';
+      statusLabel = 'REFUNDED';
       statusIcon = Icons.cancel_rounded;
     } else {
       statusBg = const Color(0xFFFFFBEB);
       statusColor = amberWarning;
-      statusLabel = 'PENDING STORE PICKUP';
+      statusLabel = 'PENDING PICKUP';
       statusIcon = Icons.pending_actions_rounded;
     }
 
@@ -695,37 +695,44 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Text(
-                        'CASH PAYOUT',
-                        style: TextStyle(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w900,
-                          color: textMuted,
-                          letterSpacing: 0.5,
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          'CASH PAYOUT',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            color: textMuted,
+                            letterSpacing: 0.4,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      ref,
-                      style: const TextStyle(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w800,
-                        color: darkNavy,
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          ref,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: darkNavy,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                   decoration: BoxDecoration(
                     color: statusBg,
                     borderRadius: BorderRadius.circular(12),
@@ -734,15 +741,15 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(statusIcon, size: 12, color: statusColor),
+                      Icon(statusIcon, size: 11, color: statusColor),
                       const SizedBox(width: 4),
                       Text(
                         statusLabel,
                         style: TextStyle(
                           color: statusColor,
-                          fontSize: 9.5,
+                          fontSize: 9,
                           fontWeight: FontWeight.w800,
-                          letterSpacing: 0.3,
+                          letterSpacing: 0.2,
                         ),
                       ),
                     ],
@@ -873,7 +880,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     if (status == 'approved') {
       statusBg = const Color(0xFFECFDF5);
       statusColor = emeraldSuccess;
-      statusLabel = 'DELIVERED / APPROVED';
+      statusLabel = 'DELIVERED';
       statusIcon = Icons.check_circle_rounded;
     } else if (status == 'rejected') {
       statusBg = const Color(0xFFFEF2F2);
@@ -883,7 +890,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     } else {
       statusBg = const Color(0xFFFFFBEB);
       statusColor = amberWarning;
-      statusLabel = 'PENDING APPROVAL';
+      statusLabel = 'PENDING';
       statusIcon = Icons.pending_rounded;
     }
 
@@ -919,37 +926,44 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Text(
-                        'REWARD ITEM',
-                        style: TextStyle(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w900,
-                          color: textMuted,
-                          letterSpacing: 0.5,
+                Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1F5F9),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          'REWARD ITEM',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            color: textMuted,
+                            letterSpacing: 0.4,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      orderRef,
-                      style: const TextStyle(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w800,
-                        color: darkNavy,
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          orderRef,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: darkNavy,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                   decoration: BoxDecoration(
                     color: statusBg,
                     borderRadius: BorderRadius.circular(12),
@@ -958,15 +972,15 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(statusIcon, size: 12, color: statusColor),
+                      Icon(statusIcon, size: 11, color: statusColor),
                       const SizedBox(width: 4),
                       Text(
                         statusLabel,
                         style: TextStyle(
                           color: statusColor,
-                          fontSize: 9.5,
+                          fontSize: 9,
                           fontWeight: FontWeight.w800,
-                          letterSpacing: 0.3,
+                          letterSpacing: 0.2,
                         ),
                       ),
                     ],
