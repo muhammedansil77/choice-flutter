@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../theme/app_theme.dart';
 import 'order_history_screen.dart';
 
 class OrderSuccessScreen extends StatefulWidget {
@@ -28,15 +29,15 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
-  // Choice Electricals Brand Luxury Palette
-  static const Color darkNavy = Color(0xFF0F172A);
-  static const Color goldAccent = Color(0xFFD4AF37);
-  static const Color goldAccentDark = Color(0xFFC59A27);
-  static const Color goldLight = Color(0xFFFEF3C7);
-  static const Color secondaryGray = Color(0xFF64748B);
-  static const Color borderSubtle = Color(0xFFE2E8F0);
-  static const Color bgSurface = Color(0xFFF8FAFC);
-  static const Color emeraldSuccess = Color(0xFF10B981);
+  // Choice Electricals Brand Luxury Palette - Navy Blue + Teal + White
+  static const Color darkNavy = AppColors.primaryNavy;         // Primary Navy Blue #183153
+  static const Color goldAccent = AppColors.secondaryTeal;     // Secondary Teal #00A6A6
+  static const Color goldAccentDark = AppColors.secondaryTeal; // Secondary Teal #00A6A6
+  static const Color goldLight = AppColors.lightTeal;          // Light Teal #E6F7F7
+  static const Color secondaryGray = AppColors.textSecondary;  // Secondary Text #64748B
+  static const Color borderSubtle = AppColors.border;          // Border #E2E8F0
+  static const Color bgSurface = AppColors.background;         // Background #F4F7FB
+  static const Color emeraldSuccess = AppColors.successGreen;  // Success Green #16A34A
 
   @override
   void initState() {
@@ -386,10 +387,10 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen>
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 5),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFFEF3C7),
+                                        color: goldLight,
                                         borderRadius: BorderRadius.circular(20),
                                         border: Border.all(
-                                          color: goldAccentDark.withValues(alpha: 0.4),
+                                          color: goldAccent.withValues(alpha: 0.4),
                                         ),
                                       ),
                                       child: Row(
@@ -399,7 +400,7 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen>
                                             width: 7,
                                             height: 7,
                                             decoration: const BoxDecoration(
-                                              color: goldAccentDark,
+                                              color: goldAccent,
                                               shape: BoxShape.circle,
                                             ),
                                           ),
@@ -409,7 +410,7 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen>
                                             style: TextStyle(
                                               fontSize: 9.5,
                                               fontWeight: FontWeight.w800,
-                                              color: Color(0xFF92400E),
+                                              color: goldAccent,
                                               letterSpacing: 0.4,
                                             ),
                                           ),
@@ -554,7 +555,7 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen>
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 14),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFFFFBEB),
+                                        color: goldLight,
                                         borderRadius: BorderRadius.circular(16),
                                         border: Border.all(
                                           color: goldAccent.withValues(alpha: 0.35),
@@ -572,7 +573,7 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen>
                                                 style: TextStyle(
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.w800,
-                                                  color: Color(0xFF92400E),
+                                                  color: darkNavy,
                                                   letterSpacing: 0.5,
                                                 ),
                                               ),
@@ -581,7 +582,7 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen>
                                                 'From Choice Coins Wallet',
                                                 style: TextStyle(
                                                   fontSize: 11,
-                                                  color: Color(0xFFB45309),
+                                                  color: secondaryGray,
                                                 ),
                                               ),
                                             ],
@@ -682,15 +683,11 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen>
                     height: 52,
                     child: Container(
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFE5BE4A), goldAccentDark],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: darkNavy,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: goldAccent.withValues(alpha: 0.35),
+                            color: darkNavy.withValues(alpha: 0.3),
                             blurRadius: 14,
                             offset: const Offset(0, 4),
                           ),
@@ -712,19 +709,19 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen>
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.receipt_long_rounded, color: darkNavy, size: 20),
+                                Icon(Icons.receipt_long_rounded, color: Colors.white, size: 20),
                                 SizedBox(width: 8),
                                 Text(
                                   'VIEW ORDER HISTORY',
                                   style: TextStyle(
-                                    color: darkNavy,
+                                    color: Colors.white,
                                     fontWeight: FontWeight.w800,
                                     fontSize: 14.5,
                                     letterSpacing: 0.5,
                                   ),
                                 ),
                                 SizedBox(width: 6),
-                                Icon(Icons.arrow_forward_rounded, color: darkNavy, size: 18),
+                                Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 18),
                               ],
                             ),
                           ),

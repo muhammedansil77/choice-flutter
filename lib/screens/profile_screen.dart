@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import 'login_screen.dart';
 import 'order_history_screen.dart';
 import 'wallet_screen.dart';
@@ -9,14 +10,14 @@ class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   // Choice Electricals Brand Design System Tokens
-  static const Color darkNavy = Color(0xFF0F172A);
-  static const Color goldAccent = Color(0xFFD4AF37);
-  static const Color goldAccentDark = Color(0xFFC59A27);
-  static const Color goldLight = Color(0xFFFEF3C7);
-  static const Color secondaryGray = Color(0xFF64748B);
-  static const Color borderSubtle = Color(0xFFE2E8F0);
-  static const Color bgSurface = Color(0xFFF8FAFC);
-  static const Color emeraldSuccess = Color(0xFF10B981);
+  static const Color darkNavy = AppColors.textPrimary;
+  static const Color primaryNavy = AppColors.primaryNavy;
+  static const Color secondaryTeal = AppColors.secondaryTeal;
+  static const Color lightTeal = AppColors.lightTeal;
+  static const Color secondaryGray = AppColors.textSecondary;
+  static const Color borderSubtle = AppColors.border;
+  static const Color bgSurface = AppColors.background;
+  static const Color emeraldSuccess = AppColors.successGreen;
   static const Color roseRed = Color(0xFFEF4444);
 
   void _showLogoutConfirmationDialog(BuildContext context) {
@@ -177,20 +178,20 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  // Avatar with Gold Accent Ring
+                  // Avatar with Teal Accent Ring
                   Container(
                     width: 76,
                     height: 76,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFE5BE4A), goldAccentDark],
+                        colors: [secondaryTeal, Color(0xFF008A8A)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: goldAccent.withValues(alpha: 0.3),
+                          color: secondaryTeal.withValues(alpha: 0.3),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -199,7 +200,7 @@ class ProfileScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(3),
                     child: Container(
                       decoration: const BoxDecoration(
-                        color: darkNavy,
+                        color: primaryNavy,
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -331,10 +332,10 @@ class ProfileScreen extends StatelessWidget {
                                 width: 22,
                                 height: 22,
                                 decoration: BoxDecoration(
-                                  color: goldLight,
+                                  color: lightTeal,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: goldAccent.withValues(alpha: 0.4),
+                                    color: secondaryTeal.withValues(alpha: 0.4),
                                   ),
                                 ),
                                 child: const Center(
@@ -394,19 +395,19 @@ class ProfileScreen extends StatelessWidget {
                               width: 26,
                               height: 26,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFEF3C7),
+                                color: lightTeal,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
                                 Icons.workspace_premium_rounded,
                                 size: 16,
-                                color: goldAccentDark,
+                                color: secondaryTeal,
                               ),
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFEF3C7),
+                                color: lightTeal,
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: const Text(
@@ -414,7 +415,7 @@ class ProfileScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 8.5,
                                   fontWeight: FontWeight.w900,
-                                  color: Color(0xFF92400E),
+                                  color: secondaryTeal,
                                 ),
                               ),
                             ),
@@ -544,7 +545,7 @@ class ProfileScreen extends StatelessWidget {
                       color: const Color(0xFF0B132B),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: goldAccent.withValues(alpha: 0.35),
+                        color: secondaryTeal.withValues(alpha: 0.35),
                       ),
                     ),
                     child: ClipRRect(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 
 class TransferWalletScreen extends StatefulWidget {
   const TransferWalletScreen({super.key});
@@ -19,14 +20,15 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
   bool _isSubmitting = false;
 
   // Choice Electricals Brand Design System Tokens
-  static const Color primaryRed = Color(0xFFD32F2F);
-  static const Color darkNavy = Color(0xFF0F172A);
-  static const Color goldAccent = Color(0xFFD4AF37);
-  static const Color textDark = Color(0xFF0F172A);
-  static const Color textMuted = Color(0xFF64748B);
-  static const Color cardBorder = Color(0xFFE2E8F0);
-  static const Color bgSurface = Color(0xFFF8FAFC);
-  static const Color emeraldSuccess = Color(0xFF10B981);
+  static const Color primaryNavy = AppColors.primaryNavy;
+  static const Color secondaryTeal = AppColors.secondaryTeal;
+  static const Color goldAccent = AppColors.secondaryTeal;
+  static const Color textDark = AppColors.textPrimary;
+  static const Color textMuted = AppColors.textSecondary;
+  static const Color cardBorder = AppColors.border;
+  static const Color bgSurface = AppColors.background;
+  static const Color emeraldSuccess = AppColors.successGreen;
+  static const Color lightTeal = AppColors.lightTeal;
 
   @override
   void initState() {
@@ -90,7 +92,7 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         title: const Row(
           children: [
-            Icon(Icons.store_rounded, color: primaryRed, size: 26),
+            Icon(Icons.store_rounded, color: secondaryTeal, size: 26),
             SizedBox(width: 10),
             Text('Confirm Cash Pickup', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: textDark)),
           ],
@@ -126,7 +128,7 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: primaryRed,
+              backgroundColor: primaryNavy,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               elevation: 0,
             ),
@@ -163,7 +165,7 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg, style: const TextStyle(fontWeight: FontWeight.w600)),
-        backgroundColor: isError ? primaryRed : emeraldSuccess,
+        backgroundColor: isError ? const Color(0xFFDC2626) : emeraldSuccess,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -184,10 +186,10 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? primaryRed : Colors.white,
+          color: isSelected ? secondaryTeal : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? primaryRed : (pts > _availablePoints ? const Color(0xFFE2E8F0) : cardBorder),
+            color: isSelected ? secondaryTeal : (pts > _availablePoints ? const Color(0xFFE2E8F0) : cardBorder),
             width: 1.4,
           ),
         ),
@@ -219,28 +221,28 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
             fontWeight: FontWeight.w800,
             letterSpacing: 0.2,
             fontSize: 18,
-            color: textDark,
+            color: primaryNavy,
           ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: textDark),
+          icon: const Icon(Icons.arrow_back_rounded, color: primaryNavy),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: textDark),
+            icon: const Icon(Icons.refresh_rounded, color: primaryNavy),
             onPressed: _loadData,
           ),
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: primaryRed))
+          ? const Center(child: CircularProgressIndicator(color: secondaryTeal))
           : RefreshIndicator(
               onRefresh: _loadData,
-              color: primaryRed,
+              color: secondaryTeal,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
                 padding: const EdgeInsets.all(16),
@@ -252,15 +254,11 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: primaryNavy,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: darkNavy.withValues(alpha: 0.2),
+                            color: primaryNavy.withValues(alpha: 0.2),
                             blurRadius: 16,
                             offset: const Offset(0, 6),
                           ),
@@ -412,16 +410,16 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFFEF2F2),
+                                      color: lightTeal,
                                       borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(color: primaryRed, width: 1.2),
+                                      border: Border.all(color: secondaryTeal, width: 1.2),
                                     ),
                                     child: const Text(
                                       'All Points',
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w800,
-                                        color: primaryRed,
+                                        color: secondaryTeal,
                                       ),
                                     ),
                                   ),
@@ -438,9 +436,9 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
                             decoration: InputDecoration(
                               labelText: 'Points to Withdraw',
                               hintText: 'e.g. 100',
-                              prefixIcon: const Icon(Icons.toll_rounded, color: primaryRed),
+                              prefixIcon: const Icon(Icons.toll_rounded, color: secondaryTeal),
                               suffixText: 'Pts',
-                              suffixStyle: const TextStyle(fontWeight: FontWeight.bold, color: primaryRed),
+                              suffixStyle: const TextStyle(fontWeight: FontWeight.bold, color: secondaryTeal),
                               filled: true,
                               fillColor: bgSurface,
                               border: OutlineInputBorder(
@@ -453,7 +451,7 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(color: primaryRed, width: 1.6),
+                                borderSide: const BorderSide(color: secondaryTeal, width: 1.6),
                               ),
                             ),
                           ),
@@ -491,7 +489,7 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
                             child: ElevatedButton(
                               onPressed: _isSubmitting ? null : _submitRequest,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryRed,
+                                backgroundColor: primaryNavy,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 elevation: 0,
                               ),
@@ -597,7 +595,7 @@ class _TransferWalletScreenState extends State<TransferWalletScreen> {
                             statusText = 'Paid & Collected';
                             statusIcon = Icons.check_circle_rounded;
                           } else if (status == 'rejected') {
-                            statusColor = primaryRed;
+                            statusColor = const Color(0xFFDC2626);
                             statusText = 'Rejected / Refunded';
                             statusIcon = Icons.cancel_rounded;
                           } else {

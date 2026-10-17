@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import 'order_history_screen.dart';
 import 'order_success_screen.dart';
 
@@ -32,15 +33,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   late Animation<double> _favoriteScaleAnim;
 
   // Choice Electricals Brand Design System Tokens
-  static const Color darkNavy = Color(0xFF0F172A);
-  static const Color goldAccent = Color(0xFFD4AF37);
-  static const Color goldAccentDark = Color(0xFFC59A27);
-  static const Color goldLight = Color(0xFFFEF3C7);
-  static const Color secondaryGray = Color(0xFF64748B);
-  static const Color borderSubtle = Color(0xFFE2E8F0);
-  static const Color bgSurface = Color(0xFFF8FAFC);
-  static const Color emeraldSuccess = Color(0xFF10B981);
+  static const Color darkNavy = AppColors.textPrimary;
+  static const Color primaryNavy = AppColors.primaryNavy;
+  static const Color secondaryTeal = AppColors.secondaryTeal;
+  static const Color secondaryGray = AppColors.textSecondary;
+  static const Color borderSubtle = AppColors.border;
+  static const Color bgSurface = AppColors.background;
+  static const Color emeraldSuccess = AppColors.successGreen;
   static const Color roseRed = Color(0xFFEF4444);
+  static const Color lightTeal = AppColors.lightTeal;
 
   @override
   void initState() {
@@ -334,9 +335,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                           width: 20,
                           height: 20,
                           decoration: BoxDecoration(
-                            color: goldLight,
+                            color: lightTeal,
                             shape: BoxShape.circle,
-                            border: Border.all(color: goldAccent.withValues(alpha: 0.4)),
+                            border: Border.all(color: secondaryTeal.withValues(alpha: 0.4)),
                           ),
                           child: const Center(
                             child: Text('🪙', style: TextStyle(fontSize: 10)),
@@ -357,7 +358,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
-                            color: goldAccentDark,
+                            color: secondaryTeal,
                           ),
                         ),
                       ],
@@ -395,15 +396,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         height: 48,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFFE5BE4A), goldAccentDark],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
+                            color: primaryNavy,
                             borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(
-                                color: goldAccent.withValues(alpha: 0.3),
+                                color: primaryNavy.withValues(alpha: 0.25),
                                 blurRadius: 10,
                                 offset: const Offset(0, 3),
                               ),
@@ -701,7 +698,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                       height: 6,
                                       decoration: BoxDecoration(
                                         color: isSelected
-                                            ? goldAccent
+                                            ? secondaryTeal
                                             : const Color(0xFFCBD5E1),
                                         borderRadius: BorderRadius.circular(3),
                                       ),
@@ -731,16 +728,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: goldLight,
+                                  color: lightTeal,
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: goldAccent.withValues(alpha: 0.35),
+                                    color: secondaryTeal.withValues(alpha: 0.35),
                                   ),
                                 ),
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.verified_rounded, size: 13, color: goldAccentDark),
+                                    Icon(Icons.verified_rounded, size: 13, color: secondaryTeal),
                                     SizedBox(width: 5),
                                     Text(
                                       'CHOICE ELECTRICALS',
@@ -845,10 +842,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                           width: 24,
                                           height: 24,
                                           decoration: BoxDecoration(
-                                            color: goldLight,
+                                            color: lightTeal,
                                             shape: BoxShape.circle,
                                             border: Border.all(
-                                              color: goldAccent.withValues(alpha: 0.4),
+                                              color: secondaryTeal.withValues(alpha: 0.4),
                                             ),
                                           ),
                                           child: const Center(
@@ -871,7 +868,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                           style: TextStyle(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w700,
-                                            color: goldAccentDark,
+                                            color: secondaryTeal,
                                           ),
                                         ),
                                       ],
@@ -1017,7 +1014,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                       style: const TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w800,
-                                        color: goldAccentDark,
+                                        color: secondaryTeal,
                                       ),
                                     ),
                                   ),
@@ -1238,7 +1235,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w800,
-                                    color: goldAccentDark,
+                                    color: secondaryTeal,
                                   ),
                                 ),
                               ],
@@ -1279,19 +1276,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                           decoration: BoxDecoration(
                             gradient: (inStock && !_isRequested)
                                 ? const LinearGradient(
-                                    colors: [Color(0xFFE5BE4A), goldAccentDark],
+                                    colors: [primaryNavy, Color(0xFF0F2B48)],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   )
                                 : null,
                             color: _isRequested
-                                ? darkNavy
+                                ? primaryNavy
                                 : (!inStock ? const Color(0xFFE2E8F0) : null),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: (inStock && !_isRequested)
                                 ? [
                                     BoxShadow(
-                                      color: goldAccent.withValues(alpha: 0.32),
+                                      color: primaryNavy.withValues(alpha: 0.28),
                                       blurRadius: 14,
                                       offset: const Offset(0, 4),
                                     ),
@@ -1360,7 +1357,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: goldAccentDark),
+        Icon(icon, size: 14, color: secondaryTeal),
         const SizedBox(width: 5),
         Text(
           text,

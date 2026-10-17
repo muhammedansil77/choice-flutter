@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../theme/app_theme.dart';
 import 'login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -47,11 +48,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryBlue = Color(0xFF087FEF);
-    const Color darkNavy = Color(0xFF0B3B82);
-    const Color secondaryGray = Color(0xFF6B7280);
-    const Color pageBg = Colors.white;
-    const Color cardBg = Colors.white;
+    const Color primaryBlue = AppColors.primaryNavy;
+    const Color secondaryTeal = AppColors.secondaryTeal;
+    const Color darkNavy = AppColors.textPrimary;
+    const Color secondaryGray = AppColors.textSecondary;
+    const Color pageBg = AppColors.background;
+    const Color cardBg = AppColors.cardBg;
 
     return PopScope(
       canPop: _currentPage == 0,
@@ -176,7 +178,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           width: isActive ? 28 : 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: isActive ? primaryBlue : const Color(0xFFE5E7EB),
+                            color: isActive ? secondaryTeal : AppColors.border,
                             borderRadius: BorderRadius.circular(4),
                           ),
                         );
@@ -225,8 +227,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     required String description,
     required Widget illustration,
   }) {
-    const Color darkNavy = Color(0xFF0B3B82);
-    const Color secondaryGray = Color(0xFF6B7280);
+    const Color darkNavy = AppColors.textPrimary;
+    const Color secondaryGray = AppColors.textSecondary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -283,7 +285,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       height: 180,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF2563EB), Color(0xFF163B75)],
+          colors: [AppColors.secondaryTeal, AppColors.primaryNavy],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -318,7 +320,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: const Color(0xFF163B75),
+                color: AppColors.primaryNavy,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFFFBBF24), width: 1.5),
               ),
@@ -349,7 +351,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF163B75).withValues(alpha: 0.06),
+            color: AppColors.primaryNavy.withValues(alpha: 0.06),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -384,7 +386,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF163B75),
+                      color: AppColors.primaryNavy,
                     ),
                   ),
                 ),
@@ -405,7 +407,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       height: 190,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF163B75),
+        color: AppColors.primaryNavy,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -462,7 +464,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: const BoxDecoration(
-                    color: Color(0xFF2563EB),
+                    color: AppColors.secondaryTeal,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.monetization_on_outlined, color: Colors.white, size: 18),
@@ -528,7 +530,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           style: const TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF6B7280),
+            color: AppColors.textSecondary,
           ),
         ),
       ],

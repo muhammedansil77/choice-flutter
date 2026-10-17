@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import 'product_detail_screen.dart';
 import 'order_history_screen.dart';
 
@@ -21,12 +22,14 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
   String _sortOrder = 'default'; // 'default', 'low_to_high', 'high_to_low'
   bool _isLoading = true;
 
-  // Design Tokens (Loyalty Red Accent & Clean Enterprise Styling)
-  static const Color primaryRed = Color(0xFFD32F2F);
-  static const Color textDark = Color(0xFF0F172A);
-  static const Color textMuted = Color(0xFF64748B);
-  static const Color cardBorder = Color(0xFFE2E8F0);
-  static const Color bgSurface = Color(0xFFF8FAFC);
+  // Design Tokens (Modern Navy Blue + Teal Theme)
+  static const Color primaryNavy = AppColors.primaryNavy;
+  static const Color secondaryTeal = AppColors.secondaryTeal;
+  static const Color textDark = AppColors.textPrimary;
+  static const Color textMuted = AppColors.textSecondary;
+  static const Color cardBorder = AppColors.border;
+  static const Color bgSurface = AppColors.background;
+  static const Color lightTeal = AppColors.lightTeal;
 
   @override
   void initState() {
@@ -192,7 +195,7 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w800,
-            color: textDark,
+            color: primaryNavy,
             letterSpacing: 0.2,
           ),
         ),
@@ -202,14 +205,14 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
             icon: Stack(
               clipBehavior: Clip.none,
               children: [
-                const Icon(Icons.shopping_cart_outlined, color: textDark, size: 24),
+                const Icon(Icons.shopping_cart_outlined, color: primaryNavy, size: 24),
                 Positioned(
                   right: -2,
                   top: -2,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                     decoration: BoxDecoration(
-                      color: primaryRed,
+                      color: secondaryTeal,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     constraints: const BoxConstraints(minWidth: 16, minHeight: 14),
@@ -238,10 +241,10 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: _fetchData,
-        color: primaryRed,
+        color: secondaryTeal,
         child: _isLoading
             ? const Center(
-                child: CircularProgressIndicator(color: primaryRed),
+                child: CircularProgressIndicator(color: secondaryTeal),
               )
             : CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -289,7 +292,7 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
-                                  color: primaryRed,
+                                  color: secondaryTeal,
                                 ),
                               ),
                             ),
@@ -354,16 +357,16 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? primaryRed : Colors.white,
+          color: isSelected ? secondaryTeal : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? primaryRed : cardBorder,
+            color: isSelected ? secondaryTeal : cardBorder,
             width: 1.2,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: primaryRed.withValues(alpha: 0.2),
+                    color: secondaryTeal.withValues(alpha: 0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -443,7 +446,7 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
-                        color: primaryRed,
+                        color: secondaryTeal,
                         height: 1.1,
                       ),
                     ),
@@ -527,7 +530,7 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         margin: const EdgeInsets.only(bottom: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
+                          color: lightTeal,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -535,7 +538,7 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                           style: const TextStyle(
                             fontSize: 9.5,
                             fontWeight: FontWeight.w700,
-                            color: textMuted,
+                            color: secondaryTeal,
                             letterSpacing: 0.4,
                           ),
                         ),
@@ -568,7 +571,7 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                     ],
                     const SizedBox(height: 6),
 
-                    // Red Points Counter (matches Screenshot 2 bottom-right)
+                    // Teal Points Counter
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Column(
@@ -580,7 +583,7 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w900,
-                              color: primaryRed,
+                              color: secondaryTeal,
                               height: 1.0,
                             ),
                           ),
@@ -590,7 +593,7 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
-                              color: primaryRed,
+                              color: secondaryTeal,
                               height: 1.0,
                             ),
                           ),

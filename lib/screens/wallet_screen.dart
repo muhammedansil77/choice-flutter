@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -16,13 +17,13 @@ class _WalletScreenState extends State<WalletScreen> {
   bool _isLoading = true;
 
   // Choice Electricals Brand Design System Tokens
-  static const Color darkNavy = Color(0xFF0F172A);
-  static const Color goldAccent = Color(0xFFD4AF37);
-  static const Color goldAccentDark = Color(0xFFC59A27);
-  static const Color secondaryGray = Color(0xFF64748B);
-  static const Color borderSubtle = Color(0xFFE2E8F0);
-  static const Color bgSurface = Color(0xFFF8FAFC);
-  static const Color emeraldSuccess = Color(0xFF10B981);
+  static const Color darkNavy = AppColors.textPrimary;
+  static const Color primaryNavy = AppColors.primaryNavy;
+  static const Color secondaryTeal = AppColors.secondaryTeal;
+  static const Color secondaryGray = AppColors.textSecondary;
+  static const Color borderSubtle = AppColors.border;
+  static const Color bgSurface = AppColors.background;
+  static const Color emeraldSuccess = AppColors.successGreen;
 
   @override
   void initState() {
@@ -62,25 +63,25 @@ class _WalletScreenState extends State<WalletScreen> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: darkNavy,
+        backgroundColor: primaryNavy,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         actions: [
           IconButton(
             onPressed: () => _fetchWallet(forceRefresh: true),
-            icon: const Icon(Icons.refresh_rounded, size: 22, color: goldAccent),
+            icon: const Icon(Icons.refresh_rounded, size: 22, color: Colors.white),
             tooltip: 'Refresh Balance',
           ),
         ],
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: goldAccentDark),
+              child: CircularProgressIndicator(color: secondaryTeal),
             )
           : RefreshIndicator(
               onRefresh: () => _fetchWallet(forceRefresh: true),
-              color: goldAccentDark,
+              color: secondaryTeal,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
@@ -92,22 +93,15 @@ class _WalletScreenState extends State<WalletScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFF0F172A),
-                            Color(0xFF1E293B),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: primaryNavy,
                         borderRadius: BorderRadius.circular(28),
                         border: Border.all(
-                          color: goldAccent.withValues(alpha: 0.4),
+                          color: secondaryTeal.withValues(alpha: 0.35),
                           width: 1.2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: darkNavy.withValues(alpha: 0.25),
+                            color: primaryNavy.withValues(alpha: 0.25),
                             blurRadius: 24,
                             offset: const Offset(0, 10),
                           ),
@@ -129,14 +123,14 @@ class _WalletScreenState extends State<WalletScreen> {
                                       color: Colors.white.withValues(alpha: 0.08),
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: goldAccent.withValues(alpha: 0.3),
+                                        color: secondaryTeal.withValues(alpha: 0.4),
                                       ),
                                     ),
                                     child: const Center(
                                       child: Icon(
                                         Icons.electric_bolt_rounded,
                                         size: 18,
-                                        color: goldAccent,
+                                        color: secondaryTeal,
                                       ),
                                     ),
                                   ),
@@ -164,7 +158,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.verified_rounded, size: 12, color: goldAccent),
+                                    Icon(Icons.verified_rounded, size: 12, color: secondaryTeal),
                                     SizedBox(width: 4),
                                     Text(
                                       'VERIFIED',
@@ -187,7 +181,7 @@ class _WalletScreenState extends State<WalletScreen> {
                           const Text(
                             'AVAILABLE BALANCE',
                             style: TextStyle(
-                              color: goldAccent,
+                              color: secondaryTeal,
                               fontSize: 11,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.0,
@@ -240,7 +234,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             ),
                             child: const Row(
                               children: [
-                                Icon(Icons.info_outline_rounded, size: 14, color: goldAccent),
+                                Icon(Icons.info_outline_rounded, size: 14, color: secondaryTeal),
                                 SizedBox(width: 8),
                                 Expanded(
                                   child: Text(

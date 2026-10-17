@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import 'transfer_wallet_screen.dart';
 import 'reward_store_screen.dart';
 
@@ -20,15 +21,15 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   String _selectedFilter = 'All'; // 'All', 'Cash', 'Products', 'Pending'
 
   // Choice Electricals Brand Design System Tokens (Matches Homepage)
-  static const Color primaryRed = Color(0xFFD32F2F);
-  static const Color darkNavy = Color(0xFF0F172A);
-  static const Color textDark = Color(0xFF0F172A);
-  static const Color textMuted = Color(0xFF64748B);
-  static const Color cardBorder = Color(0xFFE2E8F0);
-  static const Color bgSurface = Color(0xFFF8FAFC);
-  static const Color emeraldSuccess = Color(0xFF10B981);
+  static const Color primaryNavy = AppColors.primaryNavy;
+  static const Color secondaryTeal = AppColors.secondaryTeal;
+  static const Color textDark = AppColors.textPrimary;
+  static const Color darkNavy = AppColors.textPrimary;
+  static const Color textMuted = AppColors.textSecondary;
+  static const Color cardBorder = AppColors.border;
+  static const Color bgSurface = AppColors.background;
+  static const Color emeraldSuccess = AppColors.successGreen;
   static const Color amberWarning = Color(0xFFF59E0B);
-  static const Color ribbonColor = Color(0xFF1E293B);
 
   @override
   void initState() {
@@ -167,7 +168,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         surfaceTintColor: Colors.transparent,
         leading: Navigator.canPop(context)
             ? IconButton(
-                icon: const Icon(Icons.arrow_back_rounded, color: textDark),
+                icon: const Icon(Icons.arrow_back_rounded, color: primaryNavy),
                 onPressed: () => Navigator.pop(context),
               )
             : null,
@@ -178,7 +179,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: primaryRed,
+                color: primaryNavy,
                 borderRadius: BorderRadius.circular(6),
               ),
               child: const Center(
@@ -202,7 +203,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w900,
-                    color: primaryRed,
+                    color: primaryNavy,
                     letterSpacing: -0.3,
                   ),
                 ),
@@ -212,7 +213,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.0,
-                    color: darkNavy,
+                    color: textDark,
                   ),
                 ),
               ],
@@ -223,7 +224,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         actions: [
           IconButton(
             tooltip: 'Refresh',
-            icon: const Icon(Icons.refresh_rounded, color: textDark, size: 22),
+            icon: const Icon(Icons.refresh_rounded, color: primaryNavy, size: 22),
             onPressed: _loadAllActivity,
           ),
           const SizedBox(width: 6),
@@ -231,7 +232,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: _loadAllActivity,
-        color: primaryRed,
+        color: secondaryTeal,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
@@ -265,7 +266,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                           height: 64,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: primaryRed.withValues(alpha: 0.6), width: 2),
+                            border: Border.all(color: secondaryTeal, width: 2),
                             color: const Color(0xFFF1F5F9),
                           ),
                           child: const Center(
@@ -306,7 +307,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
-                              color: darkNavy,
+                              color: textDark,
                               height: 1.2,
                             ),
                             maxLines: 1,
@@ -360,7 +361,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: ribbonColor,
+                  color: primaryNavy,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -399,7 +400,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               // 4. DUAL TOP METRIC CARDS (Matches Homepage style)
               Row(
                 children: [
-                  // Card 1: Solid Red Card (Total Cash Collected)
+                  // Card 1: Solid Navy Blue Card (Total Cash Collected)
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
@@ -411,11 +412,11 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                       child: Container(
                         height: 84,
                         decoration: BoxDecoration(
-                          color: primaryRed,
+                          color: primaryNavy,
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: primaryRed.withValues(alpha: 0.25),
+                              color: primaryNavy.withValues(alpha: 0.25),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -461,7 +462,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 
                   const SizedBox(width: 12),
 
-                  // Card 2: White Card with Red Border (Product Orders Count)
+                  // Card 2: White Card with Teal Border (Product Orders Count)
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
@@ -475,10 +476,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: primaryRed, width: 1.8),
+                          border: Border.all(color: secondaryTeal, width: 1.8),
                           boxShadow: [
                             BoxShadow(
-                              color: darkNavy.withValues(alpha: 0.03),
+                              color: primaryNavy.withValues(alpha: 0.03),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -489,7 +490,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                           children: [
                             const Icon(
                               Icons.shopping_bag_outlined,
-                              color: primaryRed,
+                              color: secondaryTeal,
                               size: 36,
                             ),
                             const Spacer(),
@@ -509,7 +510,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                 Text(
                                   '${_orders.length} items',
                                   style: const TextStyle(
-                                    color: primaryRed,
+                                    color: secondaryTeal,
                                     fontSize: 19,
                                     fontWeight: FontWeight.w900,
                                   ),
@@ -549,7 +550,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               if (_isLoading)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 40),
-                  child: Center(child: CircularProgressIndicator(color: primaryRed)),
+                  child: Center(child: CircularProgressIndicator(color: secondaryTeal)),
                 )
               else if (activityList.isEmpty)
                 _buildEmptyState()
@@ -584,16 +585,16 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? primaryRed : Colors.white,
+          color: isSelected ? secondaryTeal : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? primaryRed : cardBorder,
+            color: isSelected ? secondaryTeal : cardBorder,
             width: 1.2,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: primaryRed.withValues(alpha: 0.2),
+                    color: secondaryTeal.withValues(alpha: 0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -621,7 +622,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               decoration: BoxDecoration(
                 color: isSelected
                     ? Colors.white.withValues(alpha: 0.25)
-                    : (isAlert ? primaryRed.withValues(alpha: 0.1) : const Color(0xFFF1F5F9)),
+                    : (isAlert ? const Color(0xFFFEF2F2) : const Color(0xFFF1F5F9)),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -631,7 +632,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                   fontWeight: FontWeight.w900,
                   color: isSelected
                       ? Colors.white
-                      : (isAlert ? primaryRed : textMuted),
+                      : (isAlert ? const Color(0xFFDC2626) : textMuted),
                 ),
               ),
             ),
@@ -663,7 +664,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       statusIcon = Icons.check_circle_rounded;
     } else if (status == 'rejected') {
       statusBg = const Color(0xFFFEF2F2);
-      statusColor = primaryRed;
+      statusColor = const Color(0xFFDC2626);
       statusLabel = 'REFUNDED';
       statusIcon = Icons.cancel_rounded;
     } else {
@@ -680,7 +681,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         border: Border.all(color: cardBorder, width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: darkNavy.withValues(alpha: 0.03),
+            color: primaryNavy.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -721,7 +722,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
-                            color: darkNavy,
+                            color: textDark,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -805,7 +806,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                         '$points Choice Points Redeemed',
                         style: const TextStyle(
                           fontSize: 12,
-                          color: primaryRed,
+                          color: secondaryTeal,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -884,7 +885,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
       statusIcon = Icons.check_circle_rounded;
     } else if (status == 'rejected') {
       statusBg = const Color(0xFFFEF2F2);
-      statusColor = primaryRed;
+      statusColor = const Color(0xFFDC2626);
       statusLabel = 'REJECTED';
       statusIcon = Icons.cancel_rounded;
     } else {
@@ -911,7 +912,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
         border: Border.all(color: cardBorder, width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: darkNavy.withValues(alpha: 0.03),
+            color: primaryNavy.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -952,7 +953,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
-                            color: darkNavy,
+                            color: textDark,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -1029,7 +1030,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                       Text(
                         'Qty: $quantity unit(s) · $coinsSpent Coins Redeemed',
                         style: const TextStyle(
-                          color: primaryRed,
+                          color: secondaryTeal,
                           fontSize: 11.5,
                           fontWeight: FontWeight.w700,
                         ),
@@ -1104,7 +1105,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                     icon: const Icon(Icons.currency_exchange_rounded, size: 16, color: Colors.white),
                     label: const Text('Request Cash', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 12)),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryRed,
+                      backgroundColor: primaryNavy,
                       elevation: 0,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -1118,10 +1119,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                         MaterialPageRoute(builder: (_) => const RewardStoreScreen()),
                       );
                     },
-                    icon: const Icon(Icons.shopping_bag_outlined, size: 16, color: textDark),
-                    label: const Text('Reward Store', style: TextStyle(color: textDark, fontWeight: FontWeight.w800, fontSize: 12)),
+                    icon: const Icon(Icons.shopping_bag_outlined, size: 16, color: secondaryTeal),
+                    label: const Text('Reward Store', style: TextStyle(color: secondaryTeal, fontWeight: FontWeight.w800, fontSize: 12)),
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: cardBorder),
+                      side: const BorderSide(color: secondaryTeal),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     ),

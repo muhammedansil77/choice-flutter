@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'profile_setup_screen.dart';
 
@@ -38,13 +39,13 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
   late Animation<Offset> _slideAnimation;
   late Animation<double> _scaleAnimation;
 
-  // Choice Electricals Brand Design System Tokens
-  static const Color darkNavy = Color(0xFF0F172A);         // Deep navy/black primary
-  static const Color goldAccent = Color(0xFFD4AF37);       // Choice Electricals Brand Gold
-  static const Color goldAccentDark = Color(0xFFC59A27);   // Warm gold gradient end
-  static const Color secondaryGray = Color(0xFF64748B);    // Slate-500 neutral text
-  static const Color inputBorder = Color(0xFFE2E8F0);      // Subtle inactive border
-  static const Color pageBg = Color(0xFFFAFAFA);          // Very soft clean off-white
+  // Choice Electricals Brand Design System Tokens - Navy Blue + Teal + White
+  static const Color darkNavy = AppColors.primaryNavy;         // Deep Navy Blue #183153
+  static const Color goldAccent = AppColors.secondaryTeal;     // Secondary Teal #00A6A6
+  static const Color goldAccentDark = AppColors.secondaryTeal; // Secondary Teal #00A6A6
+  static const Color secondaryGray = AppColors.textSecondary;  // Slate-500 neutral text #64748B
+  static const Color inputBorder = AppColors.border;           // Subtle inactive border #E2E8F0
+  static const Color pageBg = AppColors.background;            // Soft background #F4F7FB
 
   @override
   void initState() {
@@ -280,7 +281,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
           ],
         ),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: isError ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+        backgroundColor: isError ? const Color(0xFFEF4444) : AppColors.successGreen,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
@@ -492,7 +493,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                                   decoration: BoxDecoration(
                                     color: isFocused
                                         ? Colors.white
-                                        : (isFilled ? const Color(0xFFFDFBF7) : Colors.white),
+                                        : (isFilled ? AppColors.lightTeal : Colors.white),
                                     borderRadius: BorderRadius.circular(14),
                                     border: Border.all(
                                       color: hasError
@@ -599,22 +600,15 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           decoration: BoxDecoration(
-                            gradient: _isOtpComplete
-                                ? const LinearGradient(
-                                    colors: [Color(0xFFE5BE4A), goldAccentDark],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  )
-                                : null,
-                            color: _isOtpComplete ? null : const Color(0xFFF1F5F9),
+                            color: _isOtpComplete ? darkNavy : const Color(0xFFF1F5F9),
                             borderRadius: BorderRadius.circular(15),
                             border: _isOtpComplete
                                 ? null
-                                : Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
+                                : Border.all(color: inputBorder, width: 1.2),
                             boxShadow: _isOtpComplete
                                 ? [
                                     BoxShadow(
-                                      color: goldAccent.withValues(alpha: 0.32),
+                                      color: darkNavy.withValues(alpha: 0.28),
                                       blurRadius: 16,
                                       offset: const Offset(0, 5),
                                     ),
@@ -633,7 +627,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                                         height: 22,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2.5,
-                                          color: darkNavy,
+                                          color: Colors.white,
                                         ),
                                       )
                                     : Row(
@@ -646,7 +640,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                                               fontWeight: FontWeight.w700,
                                               letterSpacing: 0.2,
                                               color: _isOtpComplete
-                                                  ? darkNavy
+                                                  ? Colors.white
                                                   : const Color(0xFF94A3B8),
                                             ),
                                           ),
@@ -655,7 +649,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                                             Icons.arrow_forward_rounded,
                                             size: 20,
                                             color: _isOtpComplete
-                                                ? darkNavy
+                                                ? Colors.white
                                                 : const Color(0xFF94A3B8),
                                           ),
                                         ],
@@ -708,7 +702,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
                                         : const Text(
                                             'Resend code',
                                             style: TextStyle(
-                                              color: darkNavy,
+                                              color: goldAccentDark,
                                               fontWeight: FontWeight.w700,
                                               fontSize: 14,
                                               decoration: TextDecoration.underline,

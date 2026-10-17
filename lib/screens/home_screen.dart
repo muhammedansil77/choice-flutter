@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import 'reward_store_screen.dart';
 import 'order_history_screen.dart';
 import 'wallet_screen.dart';
@@ -26,15 +27,18 @@ class _HomeScreenState extends State<HomeScreen> {
     const ProfileScreen(),
   ];
 
-  static const Color darkNavy = Color(0xFF0F172A);
-  static const Color primaryRed = Color(0xFFD32F2F);
-  static const Color slateGray = Color(0xFF94A3B8);
-  static const Color borderSubtle = Color(0xFFE2E8F0);
+  static const Color darkNavy = AppColors.textPrimary;
+  static const Color secondaryTeal = AppColors.secondaryTeal;
+  static const Color slateGray = AppColors.textSecondary;
+  static const Color inactiveGray = AppColors.inactiveIcon;
+  static const Color borderSubtle = AppColors.border;
+  static const Color bgSurface = AppColors.background;
+  static const Color lightTeal = AppColors.lightTeal;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: bgSurface,
       body: IndexedStack(
         index: _currentIndex,
         children: _screens,
@@ -78,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => setState(() => _currentIndex = index),
-          splashColor: primaryRed.withValues(alpha: 0.08),
+          splashColor: secondaryTeal.withValues(alpha: 0.08),
           highlightColor: Colors.transparent,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -88,14 +92,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? primaryRed.withValues(alpha: 0.08)
+                      ? lightTeal
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
                   icon,
                   size: 22,
-                  color: isSelected ? primaryRed : slateGray,
+                  color: isSelected ? secondaryTeal : inactiveGray,
                 ),
               ),
               const SizedBox(height: 2),
@@ -105,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 9.5,
                   fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
                   letterSpacing: 0.4,
-                  color: isSelected ? primaryRed : slateGray,
+                  color: isSelected ? secondaryTeal : slateGray,
                 ),
               ),
             ],
@@ -126,11 +130,14 @@ class _HomeContent extends StatefulWidget {
 class _HomeContentState extends State<_HomeContent> {
   bool _isLoading = false;
 
-  static const Color primaryRed = Color(0xFFD32F2F);
-  static const Color darkNavy = Color(0xFF0F172A);
-  static const Color textMuted = Color(0xFF64748B);
-  static const Color ribbonColor = Color(0xFF334155);
-  static const Color cardBorder = Color(0xFFE2E8F0);
+  static const Color primaryNavy = AppColors.primaryNavy;
+  static const Color secondaryTeal = AppColors.secondaryTeal;
+  static const Color textPrimary = AppColors.textPrimary;
+  static const Color textMuted = AppColors.textSecondary;
+  static const Color cardBorder = AppColors.border;
+  static const Color bgSurface = AppColors.background;
+  static const Color lightTeal = AppColors.lightTeal;
+  static const Color successGreen = AppColors.successGreen;
 
   @override
   void initState() {
@@ -180,11 +187,11 @@ class _HomeContentState extends State<_HomeContent> {
           children: [
             Row(
               children: [
-                const Icon(Icons.notifications_active_rounded, color: primaryRed, size: 24),
+                const Icon(Icons.notifications_active_rounded, color: secondaryTeal, size: 24),
                 const SizedBox(width: 10),
                 const Text(
                   'Notifications',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: darkNavy),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textPrimary),
                 ),
                 const Spacer(),
                 IconButton(
@@ -193,19 +200,19 @@ class _HomeContentState extends State<_HomeContent> {
                 ),
               ],
             ),
-            const Divider(),
+            const Divider(color: cardBorder),
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: primaryRed.withValues(alpha: 0.1),
+                decoration: const BoxDecoration(
+                  color: lightTeal,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.card_giftcard_rounded, color: primaryRed, size: 20),
+                child: const Icon(Icons.card_giftcard_rounded, color: secondaryTeal, size: 20),
               ),
-              title: const Text('Welcome to Choice Electricals Loyalty!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              subtitle: const Text('Earn points with every purchase and redeem them at the Reward Store.', style: TextStyle(fontSize: 12)),
+              title: const Text('Welcome to Choice Electricals Loyalty!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: textPrimary)),
+              subtitle: const Text('Earn points with every purchase and redeem them at the Reward Store.', style: TextStyle(fontSize: 12, color: textMuted)),
             ),
           ],
         ),
@@ -242,11 +249,11 @@ class _HomeContentState extends State<_HomeContent> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Icon(Icons.qr_code_scanner_rounded, size: 48, color: primaryRed),
+              const Icon(Icons.qr_code_scanner_rounded, size: 48, color: secondaryTeal),
               const SizedBox(height: 10),
               const Text(
                 'Scan or Enter Coupon Code',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: darkNavy),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textPrimary),
               ),
               const SizedBox(height: 6),
               const Text(
@@ -260,8 +267,12 @@ class _HomeContentState extends State<_HomeContent> {
                 textCapitalization: TextCapitalization.characters,
                 decoration: InputDecoration(
                   hintText: 'Enter Coupon Code (e.g. CHOICE500)',
-                  prefixIcon: const Icon(Icons.confirmation_number_outlined, color: primaryRed),
+                  prefixIcon: const Icon(Icons.confirmation_number_outlined, color: secondaryTeal),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: secondaryTeal, width: 1.8),
+                  ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
               ),
@@ -274,14 +285,14 @@ class _HomeContentState extends State<_HomeContent> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Coupon verification feature active. Please contact counter staff to validate.'),
-                        backgroundColor: darkNavy,
+                        backgroundColor: primaryNavy,
                       ),
                     );
                   },
                   icon: const Icon(Icons.check_circle_outline_rounded, color: Colors.white),
                   label: const Text('Redeem Coupon', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryRed,
+                    backgroundColor: primaryNavy,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
@@ -302,16 +313,16 @@ class _HomeContentState extends State<_HomeContent> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            const Icon(Icons.info_outline_rounded, color: primaryRed),
+            const Icon(Icons.info_outline_rounded, color: secondaryTeal),
             const SizedBox(width: 8),
-            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: darkNavy)),
+            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textPrimary)),
           ],
         ),
         content: Text(description, style: const TextStyle(fontSize: 13, color: textMuted, height: 1.4)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Close', style: TextStyle(color: primaryRed, fontWeight: FontWeight.bold)),
+            child: const Text('Close', style: TextStyle(color: textMuted, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -330,7 +341,7 @@ class _HomeContentState extends State<_HomeContent> {
     final coinBalance = (user['coinBalance'] ?? 0).toString();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: bgSurface,
       drawer: _buildAppDrawer(userName, userPhone, memberId, api),
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -338,7 +349,7 @@ class _HomeContentState extends State<_HomeContent> {
         surfaceTintColor: Colors.transparent,
         leading: Builder(
           builder: (ctx) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: darkNavy, size: 26),
+            icon: const Icon(Icons.menu_rounded, color: primaryNavy, size: 26),
             onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
@@ -348,7 +359,7 @@ class _HomeContentState extends State<_HomeContent> {
             Container(
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                color: primaryRed,
+                color: primaryNavy,
                 borderRadius: BorderRadius.circular(6),
               ),
               child: const Text(
@@ -371,7 +382,7 @@ class _HomeContentState extends State<_HomeContent> {
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.3,
-                    color: primaryRed,
+                    color: primaryNavy,
                   ),
                 ),
                 Text(
@@ -380,7 +391,7 @@ class _HomeContentState extends State<_HomeContent> {
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.0,
-                    color: darkNavy,
+                    color: textPrimary,
                   ),
                 ),
               ],
@@ -394,14 +405,14 @@ class _HomeContentState extends State<_HomeContent> {
             icon: Stack(
               clipBehavior: Clip.none,
               children: [
-                const Icon(Icons.notifications_none_rounded, color: darkNavy, size: 26),
+                const Icon(Icons.notifications_none_rounded, color: primaryNavy, size: 26),
                 Positioned(
                   right: -1,
                   top: -1,
                   child: Container(
                     padding: const EdgeInsets.all(3),
                     decoration: const BoxDecoration(
-                      color: primaryRed,
+                      color: primaryNavy,
                       shape: BoxShape.circle,
                     ),
                     constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
@@ -425,14 +436,14 @@ class _HomeContentState extends State<_HomeContent> {
       ),
       body: RefreshIndicator(
         onRefresh: _loadData,
-        color: primaryRed,
+        color: secondaryTeal,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. USER PROFILE HEADER CARD (Matches Screenshot 1)
+              // 1. USER PROFILE HEADER CARD
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -440,7 +451,7 @@ class _HomeContentState extends State<_HomeContent> {
                   border: Border.all(color: cardBorder, width: 1.2),
                   boxShadow: [
                     BoxShadow(
-                      color: darkNavy.withValues(alpha: 0.03),
+                      color: primaryNavy.withValues(alpha: 0.03),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -459,14 +470,14 @@ class _HomeContentState extends State<_HomeContent> {
                           height: 68,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: primaryRed.withValues(alpha: 0.6), width: 2),
-                            color: const Color(0xFFF1F5F9),
+                            border: Border.all(color: secondaryTeal, width: 2),
+                            color: bgSurface,
                           ),
                           child: const Center(
                             child: Icon(
                               Icons.person_rounded,
                               size: 42,
-                              color: Color(0xFF94A3B8),
+                              color: AppColors.inactiveIcon,
                             ),
                           ),
                         ),
@@ -476,7 +487,7 @@ class _HomeContentState extends State<_HomeContent> {
                           child: Container(
                             padding: const EdgeInsets.all(3),
                             decoration: const BoxDecoration(
-                              color: Color(0xFF16A34A),
+                              color: successGreen,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -500,7 +511,7 @@ class _HomeContentState extends State<_HomeContent> {
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
-                              color: darkNavy,
+                              color: textPrimary,
                               height: 1.2,
                             ),
                             maxLines: 1,
@@ -537,7 +548,7 @@ class _HomeContentState extends State<_HomeContent> {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w900,
-                              color: Color(0xFF16A34A),
+                              color: successGreen,
                             ),
                           ),
                         ],
@@ -549,12 +560,12 @@ class _HomeContentState extends State<_HomeContent> {
 
               const SizedBox(height: 16),
 
-              // 2. REWARDS RIBBON (Matches Screenshot 1)
+              // 2. REWARDS RIBBON
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: ribbonColor,
+                  color: primaryNavy,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -590,10 +601,10 @@ class _HomeContentState extends State<_HomeContent> {
 
               const SizedBox(height: 14),
 
-              // 3. DUAL TOP METRIC CARDS (Matches Screenshot 1)
+              // 3. DUAL TOP METRIC CARDS
               Row(
                 children: [
-                  // Card 1: Solid Red Wallet Card
+                  // Card 1: Solid Navy Blue Wallet Card
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
@@ -605,11 +616,11 @@ class _HomeContentState extends State<_HomeContent> {
                       child: Container(
                         height: 84,
                         decoration: BoxDecoration(
-                          color: primaryRed,
+                          color: primaryNavy,
                           borderRadius: BorderRadius.circular(12),
                           boxShadow: [
                             BoxShadow(
-                              color: primaryRed.withValues(alpha: 0.25),
+                              color: primaryNavy.withValues(alpha: 0.25),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -655,17 +666,17 @@ class _HomeContentState extends State<_HomeContent> {
 
                   const SizedBox(width: 12),
 
-                  // Card 2: White Card with Red Border for Coins/Points
+                  // Card 2: White Card with Teal Border for Coins/Points
                   Expanded(
                     child: Container(
                       height: 84,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: primaryRed, width: 1.8),
+                        border: Border.all(color: secondaryTeal, width: 1.8),
                         boxShadow: [
                           BoxShadow(
-                            color: darkNavy.withValues(alpha: 0.03),
+                            color: primaryNavy.withValues(alpha: 0.03),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -676,7 +687,7 @@ class _HomeContentState extends State<_HomeContent> {
                         children: [
                           const Icon(
                             Icons.toll_rounded,
-                            color: primaryRed,
+                            color: secondaryTeal,
                             size: 38,
                           ),
                           const Spacer(),
@@ -696,7 +707,7 @@ class _HomeContentState extends State<_HomeContent> {
                               Text(
                                 coinBalance,
                                 style: const TextStyle(
-                                  color: primaryRed,
+                                  color: secondaryTeal,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w900,
                                 ),
@@ -712,7 +723,7 @@ class _HomeContentState extends State<_HomeContent> {
 
               const SizedBox(height: 16),
 
-              // 4. ACTION GRID (2 COLUMNS - Matches Screenshot 1)
+              // 4. ACTION GRID (2 COLUMNS)
               GridView.count(
                 crossAxisCount: 2,
                 shrinkWrap: true,
@@ -803,16 +814,16 @@ class _HomeContentState extends State<_HomeContent> {
                         builder: (ctx) => AlertDialog(
                           backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          title: const Text('Your Referral Code', style: TextStyle(fontWeight: FontWeight.bold, color: darkNavy)),
+                          title: const Text('Your Referral Code', style: TextStyle(fontWeight: FontWeight.bold, color: textPrimary)),
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                                 decoration: BoxDecoration(
-                                  color: primaryRed.withValues(alpha: 0.08),
+                                  color: lightTeal,
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: primaryRed, width: 1.2),
+                                  border: Border.all(color: secondaryTeal, width: 1.2),
                                 ),
                                 child: Text(
                                   memberId,
@@ -820,7 +831,7 @@ class _HomeContentState extends State<_HomeContent> {
                                     fontSize: 22,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 2.0,
-                                    color: primaryRed,
+                                    color: secondaryTeal,
                                   ),
                                 ),
                               ),
@@ -835,7 +846,7 @@ class _HomeContentState extends State<_HomeContent> {
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx),
-                              child: const Text('Close', style: TextStyle(color: primaryRed, fontWeight: FontWeight.bold)),
+                              child: const Text('Close', style: TextStyle(color: textMuted, fontWeight: FontWeight.bold)),
                             ),
                           ],
                         ),
@@ -859,15 +870,11 @@ class _HomeContentState extends State<_HomeContent> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: primaryNavy,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: darkNavy.withValues(alpha: 0.15),
+                        color: primaryNavy.withValues(alpha: 0.15),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -878,7 +885,7 @@ class _HomeContentState extends State<_HomeContent> {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: primaryRed,
+                          color: secondaryTeal,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(Icons.card_giftcard_rounded, color: Colors.white, size: 28),
@@ -932,18 +939,18 @@ class _HomeContentState extends State<_HomeContent> {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-        splashColor: primaryRed.withValues(alpha: 0.08),
+        splashColor: secondaryTeal.withValues(alpha: 0.08),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isHighlight ? primaryRed.withValues(alpha: 0.5) : cardBorder,
+              color: isHighlight ? secondaryTeal.withValues(alpha: 0.5) : cardBorder,
               width: 1.2,
             ),
             boxShadow: [
               BoxShadow(
-                color: darkNavy.withValues(alpha: 0.02),
+                color: primaryNavy.withValues(alpha: 0.02),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -956,7 +963,7 @@ class _HomeContentState extends State<_HomeContent> {
             children: [
               Icon(
                 icon,
-                color: primaryRed,
+                color: isHighlight ? secondaryTeal : primaryNavy,
                 size: 28,
               ),
               const SizedBox(height: 6),
@@ -966,7 +973,7 @@ class _HomeContentState extends State<_HomeContent> {
                 style: const TextStyle(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
-                  color: darkNavy,
+                  color: textPrimary,
                   height: 1.2,
                 ),
                 maxLines: 2,
@@ -989,13 +996,13 @@ class _HomeContentState extends State<_HomeContent> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
-              color: const Color(0xFFF8FAFC),
+              color: bgSurface,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundColor: primaryRed,
+                    backgroundColor: primaryNavy,
                     child: Text(
                       name.isNotEmpty ? name[0].toUpperCase() : 'C',
                       style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900),
@@ -1004,7 +1011,7 @@ class _HomeContentState extends State<_HomeContent> {
                   const SizedBox(height: 12),
                   Text(
                     name,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: darkNavy),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: textPrimary),
                   ),
                   Text(
                     'Mem ID: $memId • $phone',
@@ -1013,46 +1020,46 @@ class _HomeContentState extends State<_HomeContent> {
                 ],
               ),
             ),
-            const Divider(height: 1),
+            const Divider(height: 1, color: cardBorder),
 
             // Navigation Items
             ListTile(
-              leading: const Icon(Icons.shopping_bag_outlined, color: primaryRed),
-              title: const Text('Reward Store', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+              leading: const Icon(Icons.shopping_bag_outlined, color: secondaryTeal),
+              title: const Text('Reward Store', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: textPrimary)),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const RewardStoreScreen()));
               },
             ),
             ListTile(
-              leading: const Icon(Icons.receipt_long_rounded, color: primaryRed),
-              title: const Text('Redeemed Orders', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+              leading: const Icon(Icons.receipt_long_rounded, color: secondaryTeal),
+              title: const Text('Redeemed Orders', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: textPrimary)),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderHistoryScreen()));
               },
             ),
             ListTile(
-              leading: const Icon(Icons.account_balance_wallet_outlined, color: primaryRed),
-              title: const Text('Wallet & Points', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+              leading: const Icon(Icons.account_balance_wallet_outlined, color: secondaryTeal),
+              title: const Text('Wallet & Points', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: textPrimary)),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const WalletScreen()));
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person_outline_rounded, color: primaryRed),
-              title: const Text('My Profile', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+              leading: const Icon(Icons.person_outline_rounded, color: secondaryTeal),
+              title: const Text('My Profile', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: textPrimary)),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
               },
             ),
             const Spacer(),
-            const Divider(height: 1),
+            const Divider(height: 1, color: cardBorder),
             ListTile(
-              leading: const Icon(Icons.logout_rounded, color: primaryRed),
-              title: const Text('Sign Out', style: TextStyle(fontWeight: FontWeight.bold, color: primaryRed, fontSize: 14)),
+              leading: const Icon(Icons.logout_rounded, color: primaryNavy),
+              title: const Text('Sign Out', style: TextStyle(fontWeight: FontWeight.bold, color: primaryNavy, fontSize: 14)),
               onTap: () async {
                 Navigator.pop(context);
                 await api.logout();

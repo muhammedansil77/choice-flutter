@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import 'otp_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -109,7 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
           ],
         ),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: isError ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+        backgroundColor: isError ? const Color(0xFFEF4444) : AppColors.successGreen,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
@@ -118,13 +118,14 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    // 2026 Choice Electricals Palette
-    const Color primaryBlue = Color(0xFF087FEF);     // Clean Brand Primary Blue
-    const Color darkNavy = Color(0xFF0B3B82);        // Brand Header Text
-    const Color secondaryGray = Color(0xFF6B7280);   // Subtitles & Secondary Text
-    const Color inputBg = Color(0xFFF8FAFC);         // Light Field Fill
-    const Color inputBorder = Color(0xFFE5E7EB);     // Neutral Inactive Border
-    const Color pageBg = Colors.white;
+    // 2026 Choice Electricals Palette - Navy Blue + Teal + White
+    const Color primaryBlue = AppColors.primaryNavy;     // Primary Navy Blue #183153
+    const Color darkNavy = AppColors.textPrimary;        // Brand Header Text #172B4D
+    const Color secondaryTeal = AppColors.secondaryTeal; // Secondary Teal #00A6A6
+    const Color secondaryGray = AppColors.textSecondary; // Subtitles & Secondary Text #64748B
+    const Color inputBg = Colors.white;                  // Light Field Fill
+    const Color inputBorder = AppColors.border;          // Neutral Inactive Border #E2E8F0
+    const Color pageBg = AppColors.background;           // Background #F4F7FB
 
     return Scaffold(
       backgroundColor: pageBg,
@@ -237,7 +238,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                           label: 'Full Name',
                           placeholder: 'Enter your full name',
                           primaryColor: darkNavy,
-                          accentColor: primaryBlue,
+                          accentColor: secondaryTeal,
                           inputBg: inputBg,
                           inputBorder: inputBorder,
                           validator: (v) => (v == null || v.trim().isEmpty) ? 'Full name is required' : null,
@@ -251,7 +252,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                           placeholder: 'name@example.com',
                           keyboardType: TextInputType.emailAddress,
                           primaryColor: darkNavy,
-                          accentColor: primaryBlue,
+                          accentColor: secondaryTeal,
                           inputBg: inputBg,
                           inputBorder: inputBorder,
                           validator: (v) {
@@ -286,7 +287,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                             ),
                           ),
                           primaryColor: darkNavy,
-                          accentColor: primaryBlue,
+                          accentColor: secondaryTeal,
                           inputBg: inputBg,
                           inputBorder: inputBorder,
                         ),
@@ -299,7 +300,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                           placeholder: 'At least 6 characters',
                           obscureText: _obscurePassword,
                           primaryColor: darkNavy,
-                          accentColor: primaryBlue,
+                          accentColor: secondaryTeal,
                           inputBg: inputBg,
                           inputBorder: inputBorder,
                           suffixIcon: IconButton(
@@ -321,7 +322,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                           placeholder: 'Re-enter your password',
                           obscureText: _obscureConfirmPassword,
                           primaryColor: darkNavy,
-                          accentColor: primaryBlue,
+                          accentColor: secondaryTeal,
                           inputBg: inputBg,
                           inputBorder: inputBorder,
                           suffixIcon: IconButton(
@@ -350,7 +351,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                               backgroundColor: primaryBlue,
                               foregroundColor: Colors.white,
                               elevation: 0,
-                              shadowColor: primaryBlue.withOpacity(0.3),
+                              shadowColor: primaryBlue.withValues(alpha: 0.3),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                               ),
@@ -402,7 +403,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                               child: const Text(
                                 'Sign In',
                                 style: TextStyle(
-                                  color: primaryBlue,
+                                  color: secondaryTeal,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 14,
                                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import 'home_screen.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
@@ -20,10 +21,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final _nameController = TextEditingController();
   bool _isLoading = false;
 
-  static const Color primaryDark = Color(0xFF0F172A);
-  static const Color goldAccent = Color(0xFFD4AF37);
-  static const Color mutedGray = Color(0xFF64748B);
-  static const Color pageBg = Color(0xFFF8FAFC);
+  static const Color primaryNavy = AppColors.primaryNavy;
+  static const Color secondaryTeal = AppColors.secondaryTeal;
+  static const Color primaryDark = AppColors.textPrimary;
+  static const Color mutedGray = AppColors.textSecondary;
+  static const Color pageBg = AppColors.background;
 
   @override
   void dispose() {
@@ -91,7 +93,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                         borderRadius: BorderRadius.circular(22),
                         boxShadow: [
                           BoxShadow(
-                            color: goldAccent.withValues(alpha: 0.25),
+                            color: primaryNavy.withValues(alpha: 0.15),
                             blurRadius: 20,
                             offset: const Offset(0, 6),
                           ),
@@ -179,7 +181,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(color: goldAccent, width: 1.8),
+                              borderSide: const BorderSide(color: secondaryTeal, width: 1.8),
                             ),
                             errorBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -207,15 +209,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       width: double.infinity,
                       height: 54,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFFE5BE4A), Color(0xFFC79C28)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: primaryNavy,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: goldAccent.withValues(alpha: 0.30),
+                            color: primaryNavy.withValues(alpha: 0.25),
                             blurRadius: 16,
                             offset: const Offset(0, 5),
                           ),
@@ -233,7 +231,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                     height: 22,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2.5,
-                                      color: primaryDark,
+                                      color: Colors.white,
                                     ),
                                   )
                                 : const Row(

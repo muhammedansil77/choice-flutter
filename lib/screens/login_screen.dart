@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import 'otp_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,13 +24,16 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
-  // Exact Design Tokens from OtpScreen for 100% visual consistency
-  static const Color primaryBlue = Color(0xFF087FEF);
-  static const Color darkNavy = Color(0xFF0B3B82);
-  static const Color secondaryGray = Color(0xFF6B7280);
-  static const Color inputBg = Color(0xFFF8FAFC);
-  static const Color inputBorder = Color(0xFFE5E7EB);
-  static const Color pageBg = Colors.white;
+  // Navy Blue + Teal + White Theme Tokens
+  static const Color secondaryTeal = AppColors.secondaryTeal;
+  static const Color pageBg = AppColors.background;
+  static const Color inputBg = Colors.white;
+  static const Color inputBorder = AppColors.border;
+
+  // Token references
+  static const Color primaryBlue = AppColors.primaryNavy;
+  static const Color darkNavy = AppColors.textPrimary;
+  static const Color secondaryGray = AppColors.textSecondary;
 
   @override
   void initState() {
@@ -111,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           ],
         ),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: isError ? const Color(0xFFEF4444) : const Color(0xFF10B981),
+        backgroundColor: isError ? const Color(0xFFEF4444) : AppColors.successGreen,
         margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
@@ -487,7 +491,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: primaryBlue, width: 2),
+              borderSide: const BorderSide(color: secondaryTeal, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
@@ -585,7 +589,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: primaryBlue, width: 2),
+              borderSide: const BorderSide(color: secondaryTeal, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),

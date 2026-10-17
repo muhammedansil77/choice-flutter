@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/splash_screen.dart';
 import 'services/api_service.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(
@@ -24,11 +25,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF087FEF),
-          primary: const Color(0xFF087FEF),
-          surface: Colors.white,
+          seedColor: AppColors.primaryNavy,
+          primary: AppColors.primaryNavy,
+          secondary: AppColors.secondaryTeal,
+          surface: AppColors.cardBg,
         ),
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: AppColors.background,
         useMaterial3: true,
       ),
       home: const SplashScreen(),
