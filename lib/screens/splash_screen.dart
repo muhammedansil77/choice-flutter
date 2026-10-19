@@ -9,19 +9,16 @@ import 'home_screen.dart';
 import 'login_screen.dart';
 import 'onboarding_screen.dart';
 
-/// Premium Modern Splash Screen for CHOICE IRULAM
-/// Design Direction:
-/// - Navy-Blue & Metallic-Gold Palette:
-///   • Primary background: #10243A
-///   • Secondary background: #183653
-///   • Primary gold: #D4AF62
-///   • Highlight gold: #F5E6B8
-///   • White: #FFFFFF
-/// - Subtle navy gradient with soft golden radial glow behind the logo
-/// - Small number of subtle gold particles gently converging towards the center
-/// - Smooth fade and scale reveal of the existing CHOICE IRULAM logo
-/// - Gentle golden highlight sweep across the logo
-/// - Seamless 1.8-second transition into the ready application
+/// Ultra-Cinematic Luxury Splash Screen for CHOICE IRULAM
+/// Masterpiece Design Specifications:
+/// - Palette: Midnight Navy (#0B1726 -> #10243A -> #183653) & 24K Metallic Gold (#D4AF62, #F5E6B8)
+/// - Multi-layered Depth: Breathing golden radial ambient core + subtle harmonic electric energy rings
+/// - Starlight Gold Micro-Particles with natural parallax drift & delicate twinkling
+/// - Hero Logo Reveal: CHOICE IRULAM with elastic ease, breathing golden aura & 3D presence
+/// - Metallic Sheen Glint: Fluid diagonal light sweep across the golden emblem & lettering
+/// - Diamond Star Glint: Luminous lens sparkle igniting at the apex of the golden emblem
+/// - Refined Brand Tagline with micro-spaced typography & gold diamond accent
+/// - 2.2s fluid pacing transitioning seamlessly into the destination screen
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -31,19 +28,22 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _animController;
-  late final List<_SubtleParticle> _particles;
+  late final List<_CinematicParticle> _particles;
 
-  // Animation Curves
+  // Staggered Animation Channels
   late final Animation<double> _glowFade;
   late final Animation<double> _logoFade;
   late final Animation<double> _logoScale;
   late final Animation<double> _sheenProgress;
+  late final Animation<double> _glintProgress;
+  late final Animation<double> _taglineFade;
 
   bool _isImagesPrecached = false;
 
-  // Exact Brand Colors
-  static const Color primaryBg = Color(0xFF10243A);
-  static const Color secondaryBg = Color(0xFF183653);
+  // Curated Luxury Color Tokens
+  static const Color midnightBase = Color(0xFF0B1726);
+  static const Color deepNavy = Color(0xFF10243A);
+  static const Color radiantNavy = Color(0xFF183653);
   static const Color primaryGold = Color(0xFFD4AF62);
   static const Color highlightGold = Color(0xFFF5E6B8);
   static const Color pureWhite = Color(0xFFFFFFFF);
@@ -52,50 +52,62 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
 
-    // Premium Navy status bar & navigation bar
+    // High-end Dark Luxury System UI
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: primaryBg,
+        systemNavigationBarColor: midnightBase,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
 
-    // 1.8-second lightweight, fluid animation timeline
+    // 2.2-Second Cinematic Unified Choreography
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1800),
+      duration: const Duration(milliseconds: 2200),
     );
 
-    // Phase 1 (0.05 to 0.45): Soft radial glow fades in behind the center
+    // 1. Ambient Golden Core Glow
     _glowFade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.05, 0.45, curve: Curves.easeOut),
+      curve: const Interval(0.06, 0.45, curve: Curves.easeOut),
     );
 
-    // Phase 2 (0.22 to 0.62): Logo fades and scales smoothly into view
+    // 2. Hero Logo Emergence
     _logoFade = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.22, 0.60, curve: Curves.easeOut),
+      curve: const Interval(0.18, 0.52, curve: Curves.easeOut),
     );
 
-    _logoScale = Tween<double>(begin: 0.92, end: 1.0).animate(
+    _logoScale = Tween<double>(begin: 0.88, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: const Interval(0.22, 0.65, curve: Curves.easeOutCubic),
+        curve: const Interval(0.18, 0.58, curve: Curves.easeOutBack),
       ),
     );
 
-    // Phase 3 (0.55 to 0.88): Subtle golden highlight glint sweeps across the logo
+    // 3. Metallic Light Sheen Sweep across Logo
     _sheenProgress = CurvedAnimation(
       parent: _animController,
-      curve: const Interval(0.55, 0.88, curve: Curves.easeInOutCubic),
+      curve: const Interval(0.50, 0.82, curve: Curves.easeInOutCubic),
     );
 
-    // Generate 24 delicate, non-distracting gold particles
-    _particles = _generateParticles(24);
+    // 4. Diamond Star Sparkle at Emblem Apex
+    _glintProgress = CurvedAnimation(
+      parent: _animController,
+      curve: const Interval(0.66, 0.88, curve: Curves.easeOut),
+    );
+
+    // 5. Luxury Brand Tagline Fade
+    _taglineFade = CurvedAnimation(
+      parent: _animController,
+      curve: const Interval(0.64, 0.90, curve: Curves.easeOut),
+    );
+
+    // Generate 32 delicate, multi-depth golden particles
+    _particles = _generateParticles(32);
 
     _animController.forward();
     _initializeAndNavigate();
@@ -110,32 +122,32 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     }
   }
 
-  /// Generate subtle gold particles distributed naturally around the logo center
-  List<_SubtleParticle> _generateParticles(int count) {
-    final rand = math.Random(42);
-    final List<_SubtleParticle> list = [];
+  /// Generate 32 layered, organic floating particles with twinkle phases
+  List<_CinematicParticle> _generateParticles(int count) {
+    final rand = math.Random(77);
+    final List<_CinematicParticle> list = [];
 
     const colors = [
       primaryGold,
       highlightGold,
+      Color(0xFFFFEEBA),
       pureWhite,
     ];
 
     for (int i = 0; i < count; i++) {
-      // Angle around center
-      final double angle = (i / count) * 2 * math.pi + (rand.nextDouble() - 0.5) * 0.4;
-      // Start distance from center (130 to 240 px)
-      final double startDist = 130.0 + rand.nextDouble() * 110.0;
-      // Target distance (gently floating inward to 65-125 px)
-      final double targetDist = 65.0 + rand.nextDouble() * 60.0;
+      final double angle = (i / count) * 2 * math.pi + (rand.nextDouble() - 0.5) * 0.45;
+      final double startDist = 120.0 + rand.nextDouble() * 140.0;
+      final double targetDist = 55.0 + rand.nextDouble() * 75.0;
 
-      final double radius = 1.2 + rand.nextDouble() * 2.2;
+      final double radius = 1.0 + rand.nextDouble() * 2.5;
       final Color color = colors[rand.nextInt(colors.length)];
-      final double baseAlpha = 0.35 + rand.nextDouble() * 0.45;
-      final double entryDelay = rand.nextDouble() * 0.25;
+      final double baseAlpha = 0.30 + rand.nextDouble() * 0.45;
+      final double entryDelay = 0.02 + rand.nextDouble() * 0.22;
+      final double twinkleSpeed = 8.0 + rand.nextDouble() * 10.0;
+      final double driftFreq = 1.2 + rand.nextDouble() * 2.0;
 
       list.add(
-        _SubtleParticle(
+        _CinematicParticle(
           angle: angle,
           startDist: startDist,
           targetDist: targetDist,
@@ -143,6 +155,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           color: color,
           baseAlpha: baseAlpha,
           entryDelay: entryDelay,
+          twinkleSpeed: twinkleSpeed,
+          driftFreq: driftFreq,
           phase: rand.nextDouble() * math.pi * 2,
         ),
       );
@@ -151,16 +165,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     return list;
   }
 
-  /// Preserve all existing authentication checks, startup data loading and navigation
+  /// Concurrently execute auth check and seamless 2.25s cinematic timeline
   Future<void> _initializeAndNavigate() async {
     final apiService = context.read<ApiService>();
 
     try {
-      // Concurrently run authentication check and 1850ms target timing
       final results = await Future.wait([
         apiService.loadPersistedToken(),
         SharedPreferences.getInstance(),
-        Future.delayed(const Duration(milliseconds: 1850)),
+        Future.delayed(const Duration(milliseconds: 2250)),
       ]);
 
       if (!mounted) return;
@@ -183,7 +196,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
       Navigator.of(context).pushAndRemoveUntil(
         PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 400),
+          transitionDuration: const Duration(milliseconds: 450),
           pageBuilder: (_, animation, __) => destination,
           transitionsBuilder: (_, animation, __, child) {
             return FadeTransition(opacity: animation, child: child);
@@ -215,25 +228,43 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryBg,
+      backgroundColor: midnightBase,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 1. Subtle Navy Gradient Background (#10243A -> #183653)
+          // 1. Multi-Tier Luxury Navy Gradient Background
           Container(
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+              gradient: RadialGradient(
+                center: Alignment(0.0, -0.15),
+                radius: 1.15,
                 colors: [
-                  primaryBg,
-                  secondaryBg,
+                  radiantNavy,  // #183653
+                  deepNavy,     // #10243A
+                  midnightBase, // #0B1726
                 ],
+                stops: [0.0, 0.55, 1.0],
               ),
             ),
           ),
 
-          // 2. Soft Golden Radial Glow behind the Logo
+          // 2. Concentric Harmonic Electric Gold Energy Waves
+          RepaintBoundary(
+            child: AnimatedBuilder(
+              animation: _animController,
+              builder: (context, _) {
+                return CustomPaint(
+                  painter: _HarmonicEnergyRingsPainter(
+                    progress: _animController.value,
+                    ringColor: primaryGold,
+                  ),
+                  size: Size.infinite,
+                );
+              },
+            ),
+          ),
+
+          // 3. Central Ambient Golden Aura Bloom
           AnimatedBuilder(
             animation: _glowFade,
             builder: (context, _) {
@@ -242,17 +273,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 child: Opacity(
                   opacity: _glowFade.value,
                   child: Container(
-                    width: 320,
-                    height: 320,
+                    width: 360,
+                    height: 360,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          primaryGold.withValues(alpha: 0.18),
+                          primaryGold.withValues(alpha: 0.22),
                           highlightGold.withValues(alpha: 0.08),
                           Colors.transparent,
                         ],
-                        stops: const [0.0, 0.42, 1.0],
+                        stops: const [0.0, 0.44, 1.0],
                       ),
                     ),
                   ),
@@ -261,13 +292,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             },
           ),
 
-          // 3. Subtle Inward-Floating Golden Particles
+          // 4. Floating Starlight Gold Micro-Particles
           RepaintBoundary(
             child: AnimatedBuilder(
               animation: _animController,
               builder: (context, _) {
                 return CustomPaint(
-                  painter: _SubtleParticlePainter(
+                  painter: _CinematicParticleCanvasPainter(
                     progress: _animController.value,
                     particles: _particles,
                   ),
@@ -277,7 +308,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             ),
           ),
 
-          // 4. Centered CHOICE IRULAM Logo with Fade, Scale & Golden Highlight
+          // 5. Centered CHOICE IRULAM Logo & Dynamic Effects
           SafeArea(
             child: Center(
               child: AnimatedBuilder(
@@ -290,52 +321,145 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   return LayoutBuilder(
                     builder: (context, constraints) {
                       final double screenW = constraints.maxWidth;
-                      final double logoWidth = (screenW * 0.64).clamp(230.0, 290.0);
+                      final double logoWidth = (screenW * 0.68).clamp(230.0, 295.0);
 
                       return Opacity(
                         opacity: _logoFade.value,
                         child: Transform.scale(
                           scale: _logoScale.value,
-                          child: Stack(
-                            alignment: Alignment.center,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Stable High-Resolution Logo
-                              Image.asset(
-                                'assets/images/choice_irulam_logo.png',
-                                width: logoWidth,
-                                fit: BoxFit.contain,
-                                filterQuality: FilterQuality.high,
+                              // Hero Logo Stack with Sheen & Star Sparkle
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  // Base Ambient Golden Shadow behind Logo
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: primaryGold.withValues(alpha: 0.22 * _logoFade.value),
+                                          blurRadius: 42,
+                                          spreadRadius: 4,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Image.asset(
+                                      'assets/images/choice_irulam_logo.png',
+                                      width: logoWidth,
+                                      fit: BoxFit.contain,
+                                      filterQuality: FilterQuality.high,
+                                    ),
+                                  ),
+
+                                  // Golden Metallic Sheen Sweep (Phase 3)
+                                  if (_sheenProgress.value > 0.001 && _sheenProgress.value < 0.999)
+                                    ShaderMask(
+                                      blendMode: BlendMode.srcIn,
+                                      shaderCallback: (bounds) {
+                                        final double t = _sheenProgress.value;
+                                        final double startX = -1.8 + (t * 3.6);
+                                        final double endX = -0.3 + (t * 3.6);
+                                        return LinearGradient(
+                                          begin: Alignment(startX, -0.7),
+                                          end: Alignment(endX, 0.7),
+                                          colors: [
+                                            Colors.transparent,
+                                            highlightGold.withValues(alpha: 0.35),
+                                            pureWhite.withValues(alpha: 0.80),
+                                            highlightGold.withValues(alpha: 0.35),
+                                            Colors.transparent,
+                                          ],
+                                          stops: const [0.0, 0.38, 0.50, 0.62, 1.0],
+                                        ).createShader(bounds);
+                                      },
+                                      child: Image.asset(
+                                        'assets/images/choice_irulam_logo.png',
+                                        width: logoWidth,
+                                        fit: BoxFit.contain,
+                                        color: Colors.white,
+                                        colorBlendMode: BlendMode.srcIn,
+                                      ),
+                                    ),
+
+                                  // Diamond Star Lens Glint at Golden Plug Apex
+                                  if (_glintProgress.value > 0.001 && _glintProgress.value < 0.999)
+                                    Positioned(
+                                      top: logoWidth * 0.22,
+                                      right: logoWidth * 0.38,
+                                      child: CustomPaint(
+                                        painter: _StarGlintPainter(
+                                          progress: _glintProgress.value,
+                                          color: pureWhite,
+                                          glowColor: highlightGold,
+                                        ),
+                                        size: const Size(36, 36),
+                                      ),
+                                    ),
+                                ],
                               ),
 
-                              // Elegant Golden Highlight Sweep (Phase 3)
-                              if (_sheenProgress.value > 0.001 && _sheenProgress.value < 0.999)
-                                ShaderMask(
-                                  blendMode: BlendMode.srcIn,
-                                  shaderCallback: (bounds) {
-                                    final double t = _sheenProgress.value;
-                                    final double startX = -1.6 + (t * 3.2);
-                                    final double endX = -0.4 + (t * 3.2);
-                                    return LinearGradient(
-                                      begin: Alignment(startX, -0.7),
-                                      end: Alignment(endX, 0.7),
-                                      colors: [
-                                        Colors.transparent,
-                                        highlightGold.withValues(alpha: 0.40),
-                                        pureWhite.withValues(alpha: 0.75),
-                                        highlightGold.withValues(alpha: 0.40),
-                                        Colors.transparent,
+                              const SizedBox(height: 22),
+
+                              // Refined Brand Tagline & Luxury Divider Line
+                              Opacity(
+                                opacity: _taglineFade.value,
+                                child: Column(
+                                  children: [
+                                    // Elegant hairline divider with center diamond
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 38,
+                                          height: 1,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                Colors.transparent,
+                                                primaryGold.withValues(alpha: 0.6),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                                          child: Text(
+                                            '❖',
+                                            style: TextStyle(
+                                              fontSize: 7,
+                                              color: primaryGold.withValues(alpha: 0.8),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 38,
+                                          height: 1,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                primaryGold.withValues(alpha: 0.6),
+                                                Colors.transparent,
+                                              ],
+                                            ),
+                                          ),
+                                        ),
                                       ],
-                                      stops: const [0.0, 0.38, 0.50, 0.62, 1.0],
-                                    ).createShader(bounds);
-                                  },
-                                  child: Image.asset(
-                                    'assets/images/choice_irulam_logo.png',
-                                    width: logoWidth,
-                                    fit: BoxFit.contain,
-                                    color: Colors.white,
-                                    colorBlendMode: BlendMode.srcIn,
-                                  ),
+                                    ),
+                                    const SizedBox(height: 7),
+                                    Text(
+                                      'PREMIUM ELECTRICAL ACCESSORIES',
+                                      style: TextStyle(
+                                        fontSize: 9.5,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 2.8,
+                                        color: highlightGold.withValues(alpha: 0.90),
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                              ),
                             ],
                           ),
                         ),
@@ -352,8 +476,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 }
 
-/// Lightweight Particle Model
-class _SubtleParticle {
+/// Particle Entity with Organic Oscillation Properties
+class _CinematicParticle {
   final double angle;
   final double startDist;
   final double targetDist;
@@ -361,9 +485,11 @@ class _SubtleParticle {
   final Color color;
   final double baseAlpha;
   final double entryDelay;
+  final double twinkleSpeed;
+  final double driftFreq;
   final double phase;
 
-  const _SubtleParticle({
+  const _CinematicParticle({
     required this.angle,
     required this.startDist,
     required this.targetDist,
@@ -371,55 +497,104 @@ class _SubtleParticle {
     required this.color,
     required this.baseAlpha,
     required this.entryDelay,
+    required this.twinkleSpeed,
+    required this.driftFreq,
     required this.phase,
   });
 }
 
-/// High-Performance Lightweight Particle Canvas Painter
-class _SubtleParticlePainter extends CustomPainter {
+/// Canvas Painter for Concentric Harmonic Electric Energy Waves
+class _HarmonicEnergyRingsPainter extends CustomPainter {
   final double progress;
-  final List<_SubtleParticle> particles;
+  final Color ringColor;
 
-  _SubtleParticlePainter({
+  _HarmonicEnergyRingsPainter({
+    required this.progress,
+    required this.ringColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double cx = size.width * 0.5;
+    final double cy = size.height * 0.44;
+
+    // Harmonic Wave 1
+    if (progress >= 0.12 && progress <= 0.72) {
+      final double t1 = ((progress - 0.12) / 0.60).clamp(0.0, 1.0);
+      final double ease1 = Curves.easeOutCubic.transform(t1);
+      final double r1 = 55.0 + (ease1 * 125.0);
+      final double alpha1 = math.sin(t1 * math.pi) * 0.20;
+
+      final Paint p1 = Paint()
+        ..color = ringColor.withValues(alpha: alpha1)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.1;
+      canvas.drawCircle(Offset(cx, cy), r1, p1);
+    }
+
+    // Harmonic Wave 2
+    if (progress >= 0.26 && progress <= 0.88) {
+      final double t2 = ((progress - 0.26) / 0.62).clamp(0.0, 1.0);
+      final double ease2 = Curves.easeOutCubic.transform(t2);
+      final double r2 = 70.0 + (ease2 * 145.0);
+      final double alpha2 = math.sin(t2 * math.pi) * 0.14;
+
+      final Paint p2 = Paint()
+        ..color = ringColor.withValues(alpha: alpha2)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.9;
+      canvas.drawCircle(Offset(cx, cy), r2, p2);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _HarmonicEnergyRingsPainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
+}
+
+/// Canvas Painter for Shimmering Golden Dust Particles
+class _CinematicParticleCanvasPainter extends CustomPainter {
+  final double progress;
+  final List<_CinematicParticle> particles;
+
+  _CinematicParticleCanvasPainter({
     required this.progress,
     required this.particles,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (progress < 0.04) return;
+    if (progress < 0.03) return;
 
     final double centerX = size.width * 0.5;
-    final double centerY = size.height * 0.5;
+    final double centerY = size.height * 0.44;
     final Paint paint = Paint()..isAntiAlias = true;
 
     for (final p in particles) {
       if (progress < p.entryDelay) continue;
 
-      // Particle entry motion (0.0 to 1.0)
-      final double moveProgress = ((progress - p.entryDelay) / 0.55).clamp(0.0, 1.0);
+      final double moveProgress = ((progress - p.entryDelay) / 0.52).clamp(0.0, 1.0);
       final double moveEase = Curves.easeOutCubic.transform(moveProgress);
 
-      // Distance from center smoothly decreases inward towards the logo
       final double currentDist = p.startDist - ((p.startDist - p.targetDist) * moveEase);
-
-      // Gentle organic drift
-      final double angleDrift = math.sin((progress * 4.0) + p.phase) * 0.08;
+      final double angleDrift = math.sin((progress * p.driftFreq * 4.0) + p.phase) * 0.08;
       final double currentAngle = p.angle + angleDrift;
 
       final double px = centerX + math.cos(currentAngle) * currentDist;
       final double py = centerY + math.sin(currentAngle) * currentDist;
 
-      // Smooth fade in, then gentle settle
-      double alpha = p.baseAlpha;
-      if (moveProgress < 0.35) {
-        alpha *= (moveProgress / 0.35);
+      // Micro-twinkling oscillation
+      final double twinkle = (math.sin((progress * p.twinkleSpeed) + p.phase) + 1.0) * 0.5;
+      double alpha = p.baseAlpha * (0.65 + twinkle * 0.35);
+
+      if (moveProgress < 0.30) {
+        alpha *= (moveProgress / 0.30);
       }
 
-      // Gently soften particles as logo becomes fully stable
-      if (progress > 0.65) {
-        final double fadeOut = ((progress - 0.65) / 0.30).clamp(0.0, 1.0);
-        alpha *= (1.0 - fadeOut * 0.60);
+      if (progress > 0.68) {
+        final double fadeOut = ((progress - 0.68) / 0.28).clamp(0.0, 1.0);
+        alpha *= (1.0 - fadeOut * 0.55);
       }
 
       if (alpha <= 0.01) continue;
@@ -430,7 +605,66 @@ class _SubtleParticlePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _SubtleParticlePainter oldDelegate) {
+  bool shouldRepaint(covariant _CinematicParticleCanvasPainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
+}
+
+/// Custom Painter for Radiant Diamond Star Sparkle
+class _StarGlintPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color glowColor;
+
+  _StarGlintPainter({
+    required this.progress,
+    required this.color,
+    required this.glowColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (progress <= 0.001 || progress >= 0.999) return;
+
+    final double intensity = math.sin(progress * math.pi);
+    final double cx = size.width * 0.5;
+    final double cy = size.height * 0.5;
+
+    final double rayLen = 13.0 * intensity;
+    final double rayThick = 1.8 * intensity;
+
+    // Warm radial glow behind sparkle
+    final Paint glowPaint = Paint()
+      ..color = glowColor.withValues(alpha: 0.75 * intensity)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
+    canvas.drawCircle(Offset(cx, cy), 6.0 * intensity, glowPaint);
+
+    // Primary Horizontal & Vertical Diamond Rays
+    final Paint rayPaint = Paint()
+      ..color = color.withValues(alpha: intensity)
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = rayThick;
+
+    canvas.drawLine(Offset(cx - rayLen, cy), Offset(cx + rayLen, cy), rayPaint);
+    canvas.drawLine(Offset(cx, cy - rayLen), Offset(cx, cy + rayLen), rayPaint);
+
+    // Secondary Diagonal Shimmer Rays
+    final double diagLen = rayLen * 0.50;
+    final Paint diagPaint = Paint()
+      ..color = color.withValues(alpha: 0.65 * intensity)
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = rayThick * 0.65;
+
+    canvas.drawLine(Offset(cx - diagLen, cy - diagLen), Offset(cx + diagLen, cy + diagLen), diagPaint);
+    canvas.drawLine(Offset(cx - diagLen, cy + diagLen), Offset(cx + diagLen, cy - diagLen), diagPaint);
+
+    // Intense White Center Point
+    final Paint corePaint = Paint()..color = Colors.white.withValues(alpha: intensity);
+    canvas.drawCircle(Offset(cx, cy), 2.2 * intensity, corePaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _StarGlintPainter oldDelegate) {
     return oldDelegate.progress != progress;
   }
 }
