@@ -15,7 +15,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
 
   bool _isLoading = false;
@@ -54,7 +53,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   @override
   void dispose() {
     _animController.dispose();
-    _nameController.dispose();
     _phoneController.dispose();
     super.dispose();
   }
@@ -63,12 +61,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     if (_isLoading) return;
     if (!_formKey.currentState!.validate()) return;
 
-    final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
     setState(() => _isLoading = true);
 
     try {
-      final res = await context.read<ApiService>().sendPhoneOtp(phone, name: name);
+      final res = await context.read<ApiService>().sendPhoneOtp(phone);
 
       if (mounted) {
         final devCode = res['devOtp']?.toString();
@@ -79,7 +76,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           MaterialPageRoute(
             builder: (_) => OtpScreen(
               phoneNumber: phone,
-              name: name.isNotEmpty ? name : null,
               initialDevOtp: devCode,
             ),
           ),
@@ -328,12 +324,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
                           const SizedBox(height: 24),
 
-                          // 1. YOUR NAME FIELD
-                          _buildNameField(),
-
-                          const SizedBox(height: 16),
-
-                          // 2. PHONE NUMBER FIELD
+                          // PHONE NUMBER FIELD
                           _buildPhoneField(),
 
                           const SizedBox(height: 24),
@@ -449,72 +440,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildNameField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text(
-          'Your Name',
-          style: TextStyle(
-            color: darkNavy,
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.1,
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextFormField(
-          controller: _nameController,
-          textCapitalization: TextCapitalization.words,
-          keyboardType: TextInputType.name,
-          style: const TextStyle(
-            color: darkNavy,
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-          ),
-          decoration: InputDecoration(
-            hintText: 'e.g. Ansil',
-            hintStyle: const TextStyle(
-              color: Color(0xFF9CA3AF),
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
-            prefixIcon: const Icon(
-              Icons.person_outline_rounded,
-              color: Color(0xFF9CA3AF),
-              size: 20,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: inputBorder, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: secondaryTeal, width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 2),
-            ),
-            filled: true,
-            fillColor: inputBg,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          ),
-          validator: (v) {
-            if (v == null || v.trim().isEmpty) {
-              return 'Please enter your name';
-            }
-            return null;
-          },
-        ),
-      ],
-    );
-  }
 
   Widget _buildPhoneField() {
     return Column(
