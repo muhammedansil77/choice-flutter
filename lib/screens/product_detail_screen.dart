@@ -415,7 +415,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                 child: Text(
                                   'Confirm Order',
                                   style: TextStyle(
-                                    color: darkNavy,
+                                    color: Colors.white,
                                     fontWeight: FontWeight.w800,
                                     fontSize: 14,
                                     letterSpacing: 0.3,
@@ -1317,7 +1317,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                         height: 22,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2.5,
-                                          color: darkNavy,
+                                          color: Colors.white,
                                         ),
                                       )
                                     : Text(
@@ -1333,7 +1333,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                           color: _isRequested
                                               ? Colors.white
                                               : (inStock
-                                                  ? darkNavy
+                                                  ? Colors.white
                                                   : const Color(0xFF94A3B8)),
                                         ),
                                       ),

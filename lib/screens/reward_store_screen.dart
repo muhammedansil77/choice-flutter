@@ -58,13 +58,10 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
     }
   }
 
-  // Group products by their categories and apply sorting
+  // Group products by their categories and apply sorting (both category-level and item-level)
   Map<String, List<dynamic>> get _categoryGroupedProducts {
     final Map<String, List<dynamic>> groups = {};
 
-    final list = List<dynamic>.from(_products);
-
-    // Apply Low to High or High to Low Points Sorting
     num getPoints(dynamic p) {
       if (p == null) return 0;
       final val = p['priceInCoins'] ?? p['coinPrice'] ?? p['price'] ?? 0;
@@ -75,49 +72,88 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
       return 0;
     }
 
-    if (_sortOrder == 'low_to_high') {
-      list.sort((a, b) => getPoints(a).compareTo(getPoints(b)));
-    } else if (_sortOrder == 'high_to_low') {
-      list.sort((a, b) => getPoints(b).compareTo(getPoints(a)));
-    }
+    final isHighToLow = _sortOrder == 'high_to_low';
 
     // If a specific category filter is chosen via "View More"
     if (_selectedCategoryFilter != null && _selectedCategoryFilter != 'All') {
-      final filtered = list.where((p) => p['category'] == _selectedCategoryFilter).toList();
+      final filtered = _products
+          .where((p) => (p['category'] ?? '').toString().trim() == _selectedCategoryFilter)
+          .toList();
+      if (isHighToLow) {
+        filtered.sort((a, b) => getPoints(b).compareTo(getPoints(a)));
+      } else {
+        // Default & Low to High: Low to High
+        filtered.sort((a, b) => getPoints(a).compareTo(getPoints(b)));
+      }
       groups[_selectedCategoryFilter!] = filtered;
       return groups;
     }
 
-    // When sorting is active (Low to High or High to Low),
-    // display all products globally across the store in true sorted order
-    if (_sortOrder == 'low_to_high') {
-      groups['POINTS: LOW TO HIGH'] = list;
-      return groups;
-    } else if (_sortOrder == 'high_to_low') {
-      groups['POINTS: HIGH TO LOW'] = list;
-      return groups;
-    }
+    // 1. Group all products by their category
+    final Map<String, List<dynamic>> rawGroups = {};
 
-    // Default view: Group by defined categories from server
+    // First collect matching products from defined categories
     for (final cat in _categories) {
       final catName = (cat['name'] ?? '').toString().trim();
       if (catName.isNotEmpty) {
-        final matching = list.where((p) => p['category'] == catName).toList();
+        final matching = _products
+            .where((p) => (p['category'] ?? '').toString().trim() == catName)
+            .toList();
         if (matching.isNotEmpty) {
-          groups[catName] = matching;
+          rawGroups[catName] = matching;
         }
       }
     }
 
-    // Add any remaining products under categories not in the category list
-    for (final p in list) {
+    // Also include any products whose category wasn't in _categories list
+    for (final p in _products) {
       final catName = (p['category'] ?? 'General Products').toString().trim();
       final key = catName.isEmpty ? 'General Products' : catName;
-      if (!groups.containsKey(key)) {
-        groups[key] = [p];
-      } else if (!groups[key]!.contains(p)) {
-        groups[key]!.add(p);
+      if (!rawGroups.containsKey(key)) {
+        rawGroups[key] = [p];
+      } else if (!rawGroups[key]!.contains(p)) {
+        rawGroups[key]!.add(p);
       }
+    }
+
+    // 2. Sort the products inside EACH category:
+    // Default & Low to High: lowest points first
+    // High to Low: highest points first
+    for (final entry in rawGroups.entries) {
+      final list = entry.value;
+      if (isHighToLow) {
+        list.sort((a, b) => getPoints(b).compareTo(getPoints(a)));
+      } else {
+        list.sort((a, b) => getPoints(a).compareTo(getPoints(b)));
+      }
+    }
+
+    // 3. Sort the categories themselves:
+    // For Low to High & Default: sort by minimum point product in the category (ascending)
+    // For High to Low: sort by maximum point product in the category (descending)
+    final sortedCategories = rawGroups.keys.toList();
+
+    sortedCategories.sort((catA, catB) {
+      final listA = rawGroups[catA]!;
+      final listB = rawGroups[catB]!;
+
+      if (isHighToLow) {
+        final maxA = listA.map(getPoints).fold<num>(0, (prev, curr) => curr > prev ? curr : prev);
+        final maxB = listB.map(getPoints).fold<num>(0, (prev, curr) => curr > prev ? curr : prev);
+        final cmp = maxB.compareTo(maxA);
+        if (cmp != 0) return cmp;
+        return catA.compareTo(catB);
+      } else {
+        final minA = listA.map(getPoints).fold<num>(double.infinity, (prev, curr) => curr < prev ? curr : prev);
+        final minB = listB.map(getPoints).fold<num>(double.infinity, (prev, curr) => curr < prev ? curr : prev);
+        final cmp = minA.compareTo(minB);
+        if (cmp != 0) return cmp;
+        return catA.compareTo(catB);
+      }
+    });
+
+    for (final cat in sortedCategories) {
+      groups[cat] = rawGroups[cat]!;
     }
 
     return groups;
@@ -330,7 +366,7 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                       child: _buildCategorySection(
                         categoryName: entry.key,
                         products: entry.value,
-                        isFilteredView: _selectedCategoryFilter != null || _sortOrder != 'default',
+                        isFilteredView: _selectedCategoryFilter != null,
                       ),
                     ),
 

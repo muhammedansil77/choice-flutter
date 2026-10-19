@@ -240,14 +240,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                       Text(
                                         'Save & Continue',
                                         style: TextStyle(
-                                          color: primaryDark,
+                                          color: Colors.white,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700,
                                           letterSpacing: 0.2,
                                         ),
                                       ),
                                       SizedBox(width: 8),
-                                      Icon(Icons.arrow_forward_rounded, size: 20, color: primaryDark),
+                                      Icon(Icons.arrow_forward_rounded, size: 20, color: Colors.white),
                                     ],
                                   ),
                           ),

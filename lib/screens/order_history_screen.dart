@@ -1054,10 +1054,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 28),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
@@ -1078,7 +1078,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               ),
               const SizedBox(height: 14),
               Text(
-                'No ${_selectedFilter != 'All' ? _selectedFilter : ''} Activity Found',
+                _selectedFilter == 'All' ? 'No Activity Found' : 'No $_selectedFilter Activity Found',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -1092,8 +1092,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                 style: TextStyle(fontSize: 12, color: textMuted, height: 1.35),
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Wrap(
+                spacing: 12,
+                runSpacing: 10,
+                alignment: WrapAlignment.center,
                 children: [
                   ElevatedButton.icon(
                     onPressed: () {
@@ -1111,7 +1113,6 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     ),
                   ),
-                  const SizedBox(width: 10),
                   OutlinedButton.icon(
                     onPressed: () {
                       Navigator.push(
