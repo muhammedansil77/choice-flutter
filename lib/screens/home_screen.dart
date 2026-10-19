@@ -19,9 +19,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
+  late final List<Widget> _screens = [
     const _HomeContent(),
-    const RewardStoreScreen(),
+    RewardStoreScreen(onBackToHome: () => setState(() => _currentIndex = 0)),
     const OrderHistoryScreen(),
     const WalletScreen(),
     const ProfileScreen(),
@@ -37,36 +37,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgSurface,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: const Border(top: BorderSide(color: borderSubtle, width: 1.2)),
-          boxShadow: [
-            BoxShadow(
-              color: darkNavy.withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, -4),
-            ),
-          ],
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && _currentIndex != 0) {
+          setState(() => _currentIndex = 0);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: bgSurface,
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _screens,
         ),
-        child: SafeArea(
-          top: false,
-          child: SizedBox(
-            height: 64,
-            child: Row(
-              children: [
-                _buildNavItem(0, Icons.home_rounded, 'HOME'),
-                _buildNavItem(1, Icons.shopping_bag_outlined, 'REWARDS'),
-                _buildNavItem(2, Icons.receipt_long_rounded, 'ORDERS'),
-                _buildNavItem(3, Icons.account_balance_wallet_rounded, 'WALLET'),
-                _buildNavItem(4, Icons.person_rounded, 'PROFILE'),
-              ],
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: const Border(top: BorderSide(color: borderSubtle, width: 1.2)),
+            boxShadow: [
+              BoxShadow(
+                color: darkNavy.withValues(alpha: 0.04),
+                blurRadius: 16,
+                offset: const Offset(0, -4),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              height: 64,
+              child: Row(
+                children: [
+                  _buildNavItem(0, Icons.home_rounded, 'HOME'),
+                  _buildNavItem(1, Icons.shopping_bag_outlined, 'REWARDS'),
+                  _buildNavItem(2, Icons.receipt_long_rounded, 'ORDERS'),
+                  _buildNavItem(3, Icons.account_balance_wallet_rounded, 'WALLET'),
+                  _buildNavItem(4, Icons.person_rounded, 'PROFILE'),
+                ],
+              ),
             ),
           ),
         ),

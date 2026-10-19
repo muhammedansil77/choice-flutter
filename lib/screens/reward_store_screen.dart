@@ -8,8 +8,9 @@ import 'order_history_screen.dart';
 
 class RewardStoreScreen extends StatefulWidget {
   final String? initialCategory;
+  final VoidCallback? onBackToHome;
 
-  const RewardStoreScreen({super.key, this.initialCategory});
+  const RewardStoreScreen({super.key, this.initialCategory, this.onBackToHome});
 
   @override
   State<RewardStoreScreen> createState() => _RewardStoreScreenState();
@@ -208,23 +209,40 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
   Widget build(BuildContext context) {
     final grouped = _categoryGroupedProducts;
 
-    return Scaffold(
-      backgroundColor: bgSurface,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: textDark),
-          onPressed: () {
-            if (_selectedCategoryFilter != null) {
-              setState(() => _selectedCategoryFilter = null);
-            } else {
-              Navigator.pop(context);
-            }
-          },
-        ),
-        title: Text(
+    final bool canGoBack = _selectedCategoryFilter != null ||
+        Navigator.canPop(context) ||
+        widget.onBackToHome != null;
+
+    void handleBack() {
+      if (_selectedCategoryFilter != null) {
+        setState(() => _selectedCategoryFilter = null);
+      } else if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      } else if (widget.onBackToHome != null) {
+        widget.onBackToHome!();
+      }
+    }
+
+    return PopScope(
+      canPop: _selectedCategoryFilter == null && !Navigator.canPop(context) && widget.onBackToHome == null,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          handleBack();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: bgSurface,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+          leading: canGoBack
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back_rounded, color: textDark),
+                  onPressed: handleBack,
+                )
+              : null,
+          title: Text(
           _selectedCategoryFilter != null
               ? _selectedCategoryFilter!.toUpperCase()
               : 'Reward Store',
@@ -373,6 +391,7 @@ class _RewardStoreScreenState extends State<RewardStoreScreen> {
                   const SliverToBoxAdapter(child: SizedBox(height: 40)),
                 ],
               ),
+      ),
       ),
     );
   }
