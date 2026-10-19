@@ -627,19 +627,19 @@ class _HomeContentState extends State<_HomeContent> {
                           ],
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                        child: const Row(
+                        child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.account_balance_wallet_rounded,
                               color: Colors.white,
                               size: 38,
                             ),
-                            Spacer(),
+                            const Spacer(),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(
+                                const Text(
                                   'Wallet',
                                   style: TextStyle(
                                     color: Colors.white,
@@ -647,10 +647,10 @@ class _HomeContentState extends State<_HomeContent> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(height: 2),
+                                const SizedBox(height: 2),
                                 Text(
-                                  '₹ 0',
-                                  style: TextStyle(
+                                  '₹ $coinBalance',
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,
                                     fontWeight: FontWeight.w900,
