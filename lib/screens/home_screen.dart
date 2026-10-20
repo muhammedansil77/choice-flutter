@@ -8,6 +8,7 @@ import 'wallet_screen.dart';
 import 'transfer_wallet_screen.dart';
 import 'profile_screen.dart';
 import 'login_screen.dart';
+import 'credit_ledger_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -767,6 +768,17 @@ class _HomeContentState extends State<_HomeContent> {
                     },
                   ),
                   _buildActionTile(
+                    icon: Icons.menu_book_rounded,
+                    title: 'Credit Ledger',
+                    isHighlight: true,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const CreditLedgerScreen()),
+                      );
+                    },
+                  ),
+                  _buildActionTile(
                     icon: Icons.groups_rounded,
                     title: 'Electrician Meet',
                     onTap: () => _showSchemeModal(
@@ -1053,6 +1065,14 @@ class _HomeContentState extends State<_HomeContent> {
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const WalletScreen()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.menu_book_rounded, color: secondaryTeal),
+              title: const Text('Credit Ledger (Khata)', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: textPrimary)),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const CreditLedgerScreen()));
               },
             ),
             ListTile(

@@ -505,6 +505,31 @@ class ApiService with ChangeNotifier {
     }
   }
 
+  // CREDIT LEDGER (KHATA) METHODS
+  Future<Map<String, dynamic>> getMyCreditLedger({String? category, String? status}) async {
+    final queryParams = <String, String>{};
+    if (category != null && category.isNotEmpty && category.toLowerCase() != 'all') {
+      queryParams['category'] = category;
+    }
+    if (status != null && status.isNotEmpty && status.toLowerCase() != 'all') {
+      queryParams['status'] = status;
+    }
+
+    final uri = Uri.parse('$_baseUrl/credit/my-ledger').replace(queryParameters: queryParams.isNotEmpty ? queryParams : null);
+    final response = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $_token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception(_parseErrorMessage(response, 'Failed to fetch personal credit ledger'));
+    }
+  }
+
   Future<void> logout() async {
     _token = null;
     _user = null;
