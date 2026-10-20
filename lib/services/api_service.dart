@@ -130,13 +130,44 @@ class ApiService with ChangeNotifier {
     }
   }
 
-  Future<void> updateLocalProfileName(String newName) async {
-    if (_user != null) {
-      _user!['name'] = newName.trim();
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user', jsonEncode(_user));
-      notifyListeners();
+  Future<void> updateProfileName(String newName) async {
+    final trimmed = newName.trim();
+    if (trimmed.isEmpty) return;
+
+    // 1. Send update to remote backend database
+    if (_token != null && _token!.trim().isNotEmpty) {
+      try {
+        final response = await http.put(
+          Uri.parse('$_baseUrl/users/profile'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $_token',
+          },
+          body: jsonEncode({'name': trimmed}),
+        );
+
+        if (response.statusCode != 200) {
+          throw Exception(_parseErrorMessage(response, 'Failed to update profile name'));
+        }
+      } catch (e) {
+        debugPrint('Error updating profile name on backend: $e');
+        rethrow;
+      }
     }
+
+    // 2. Update local state and SharedPreferences
+    if (_user != null) {
+      _user!['name'] = trimmed;
+    } else {
+      _user = {'name': trimmed};
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user', jsonEncode(_user));
+    notifyListeners();
+  }
+
+  Future<void> updateLocalProfileName(String newName) async {
+    await updateProfileName(newName);
   }
 
   Future<void> sendRegisterOtp(String email) async {

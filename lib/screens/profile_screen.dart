@@ -124,6 +124,147 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  void _showEditNameDialog(BuildContext context, String currentName) {
+    final nameController = TextEditingController(
+      text: (currentName.isNotEmpty &&
+              !currentName.toLowerCase().startsWith('customer ') &&
+              currentName.toLowerCase() != 'guest user')
+          ? currentName
+          : '',
+    );
+    bool isSaving = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: lightTeal,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.badge_rounded, color: secondaryTeal, size: 22),
+                  ),
+                  const SizedBox(width: 14),
+                  const Text(
+                    'Edit Profile Name',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: darkNavy,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Enter your full name or shop name to display on your invoices and account.',
+                style: TextStyle(fontSize: 13, color: secondaryGray, height: 1.4),
+              ),
+              const SizedBox(height: 18),
+              TextField(
+                controller: nameController,
+                textCapitalization: TextCapitalization.words,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'e.g. Muhammed Ansil',
+                  hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
+                  prefixIcon: const Icon(Icons.person_outline_rounded, color: secondaryTeal, size: 20),
+                  filled: true,
+                  fillColor: const Color(0xFFF8FAFC),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: secondaryTeal, width: 1.8),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 22),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 44,
+                      child: OutlinedButton(
+                        onPressed: isSaving ? null : () => Navigator.of(ctx).pop(),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFFCBD5E1)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text('Cancel', style: TextStyle(color: secondaryGray, fontWeight: FontWeight.w700)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 44,
+                      child: ElevatedButton(
+                        onPressed: isSaving
+                            ? null
+                            : () async {
+                                final newName = nameController.text.trim();
+                                if (newName.isEmpty) return;
+                                setDialogState(() => isSaving = true);
+                                try {
+                                  await context.read<ApiService>().updateProfileName(newName);
+                                  if (ctx.mounted) Navigator.of(ctx).pop();
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Profile name updated to $newName'),
+                                        backgroundColor: emeraldSuccess,
+                                        behavior: SnackBarBehavior.floating,
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (ctx.mounted) setDialogState(() => isSaving = false);
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(e.toString().replaceAll('Exception: ', '')),
+                                        backgroundColor: roseRed,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryNavy,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: isSaving
+                            ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                            : const Text('Save Name', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = context.watch<ApiService>().currentUser;
@@ -218,16 +359,30 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 14),
 
-                  // Name
-                  Text(
-                    userName,
-                    style: const TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w900,
-                      color: darkNavy,
-                      letterSpacing: -0.2,
+                  // Name with Edit Button
+                  InkWell(
+                    onTap: () => _showEditNameDialog(context, userName),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            userName,
+                            style: const TextStyle(
+                              fontSize: 19,
+                              fontWeight: FontWeight.w900,
+                              color: darkNavy,
+                              letterSpacing: -0.2,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(width: 6),
+                          const Icon(Icons.edit_outlined, size: 16, color: secondaryTeal),
+                        ],
+                      ),
                     ),
-                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 3),
 
@@ -464,6 +619,13 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
+                  _buildMenuItem(
+                    icon: Icons.badge_outlined,
+                    title: 'Edit Profile Name',
+                    subtitle: 'Update your personal or business name',
+                    onTap: () => _showEditNameDialog(context, userName),
+                  ),
+                  const Divider(height: 1, indent: 64, color: Color(0xFFF1F5F9)),
                   _buildMenuItem(
                     icon: Icons.receipt_long_rounded,
                     title: 'Purchase History',

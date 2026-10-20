@@ -186,9 +186,14 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
           );
 
       if (mounted) {
+        final userName = (res['name'] ?? '').toString().trim();
         final isNew = res['isNewUser'] == true;
-        if (isNew) {
-          _showSnackBar('Welcome to Choice Electricals! Let\'s set up your profile.', isError: false);
+        final isPlaceholder = userName.isEmpty ||
+            userName.toLowerCase() == 'guest user' ||
+            userName.toLowerCase().startsWith('customer ');
+
+        if (isNew || isPlaceholder) {
+          _showSnackBar('Welcome to Choice Electricals! Please enter your name.', isError: false);
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (_) => ProfileSetupScreen(phoneNumber: widget.phoneNumber),
